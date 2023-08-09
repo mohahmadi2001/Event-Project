@@ -1,4 +1,6 @@
+from datetime import timezone
 from django.db import models
+from django.forms import ValidationError
 from django.utils.translation import gettext as _
 
 # Create your models here.
@@ -23,7 +25,55 @@ class Election(models.Model):
         """
         now = timezone.now()
         return self.start_date <= now <= self.end_date
-   
+    
+    def get_votes(self):
+        """
+        Retrieve the votes cast in this election.
+
+        This method retrieves all the votes cast in this election and returns
+        a queryset containing the Vote objects associated with this election.
+        """
+        return self.vote_set.all()
+    
+    def get_results(self):
+        """
+        Calculate and return the voting results for this election.
+        
+        This method calculates the vote count for each option in the election
+        and returns a dictionary containing the option titles and their respective vote counts.
+        """
+        options = self.options.all()
+        results = {}
+
+        for option in options:
+            vote_count = option.vote_set.count()
+            results[option.title] = vote_count
+
+        return results
+    
+    def register_participant(self, user):
+        """
+        Register a participant in the election if the conditions are met.
+
+        """
+        if user in self.participants.all():
+            raise ValueError("User is already registered for this election.")
+        
+        if not self.is_active():
+            raise ValueError("This election is not currently active.")
+        
+        self.participants.add(user)
+        return True
+
+    @staticmethod
+    def get_active_elections():
+        """
+        Retrieve a queryset of active elections.
+
+        """
+        now = timezone.now()
+        return Election.objects.filter(start_date__lte=now, end_date__gte=now)
+
    
 class ElectionOption(models.Model):
     election = models.ForeignKey(Election, on_delete=models.CASCADE, related_name="options")
@@ -33,7 +83,7 @@ class ElectionOption(models.Model):
     def __str__(self):
         return self.title
     
-
+    
 class Vote(models.Model):
     user = models.ForeignKey("accounts.User", on_delete=models.CASCADE)
     election = models.ForeignKey(Election, on_delete=models.CASCADE, related_name="votes")
@@ -41,3 +91,16 @@ class Vote(models.Model):
     
     class Meta:
         unique_together = ('user', 'election')
+        
+    def save(self, *args, **kwargs):
+        """
+        Save the vote object after checking if the associated election is active.
+
+        This method overrides the default save method to perform an additional check.
+        It ensures that the associated election is currently active before saving the vote.
+        If the election is not active, a ValidationError will be raised.
+
+        """
+        if not self.election.is_active():
+            raise ValidationError("This election is not currently active.")
+        super().save(*args, **kwargs)
