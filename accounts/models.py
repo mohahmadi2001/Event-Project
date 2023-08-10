@@ -91,5 +91,5 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Candidate(models.Model):
-    student_id = models.ForeignKey("User", verbose_name=_("student id"), on_delete=models.CASCADE)
+    student = models.ForeignKey("User", verbose_name=_("student id"), on_delete=models.CASCADE)
     election = models.ForeignKey("election.Election", verbose_name=_("candidates"), on_delete=models.CASCADE, related_name="candidates", null=True)
