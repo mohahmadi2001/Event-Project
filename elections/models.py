@@ -55,13 +55,7 @@ class Election(models.Model):
         """
         Register a participant in the election if the conditions are met.
 
-        """
-        if user in self.participants.all():
-            raise ValueError("User is already registered for this election.")
-        
-        if not self.is_active():
-            raise ValueError("This election is not currently active.")
-        
+        """ 
         self.participants.add(user)
         return True
 

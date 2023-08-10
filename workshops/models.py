@@ -21,19 +21,13 @@ class Event(models.Model):
         return self.title
     
     def register_participant(self, user):
-        now = timezone.now()
-
-        if self.start_date <= now <= self.end_date:  # Check if the event is active
-            if self.participants < self.capacity:
-                if user.events_as_student.filter(pk=self.pk).exists():
-                    raise ValueError("User is already registered for this event.")
-                user.events_as_student.add(self)
-                self.participants += 1
-                self.save()
-            else:
-                raise ValueError("Event is already full.")
-        else:
-            raise ValueError("Event is not active for registration.")
+        """
+        Register a user as a participant in the event.
+        """
+        user.events_as_student.add(self)
+        self.participants += 1
+        self.save()
+            
 
 class EventType(models.Model):
     type = models.CharField(_("type"), max_length=50)
