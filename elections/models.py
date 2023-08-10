@@ -89,12 +89,5 @@ class Vote(models.Model):
     def save(self, *args, **kwargs):
         """
         Save the vote object after checking if the associated election is active.
-
-        This method overrides the default save method to perform an additional check.
-        It ensures that the associated election is currently active before saving the vote.
-        If the election is not active, a ValidationError will be raised.
-
         """
-        if not self.election.is_active():
-            raise ValidationError("This election is not currently active.")
         super().save(*args, **kwargs)
