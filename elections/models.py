@@ -194,3 +194,6 @@ class Candidate(SoftDeleteModel):
         self.description = description
         self.is_approved = is_approved
         self.save()
+        
+    def is_approved(self):
+        return self.is_approved
