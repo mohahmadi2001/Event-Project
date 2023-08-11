@@ -105,6 +105,16 @@ class ElectionOption(models.Model):
     def __str__(self):
         return self.title
     
+    @classmethod
+    def create_ElectionOption(cls, title, description, election):
+        option = cls(
+            title=title,
+            description=description,
+            election=election
+        )
+        option.save()
+        return option
+
     
 class Vote(models.Model):
     user = models.ForeignKey("accounts.User", on_delete=models.CASCADE)
