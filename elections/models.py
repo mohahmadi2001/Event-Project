@@ -152,3 +152,22 @@ class Vote(SoftDeleteModel):
         Save the vote object after checking if the associated election is active.
         """
         super().save(*args, **kwargs)
+    
+    
+class Candidate(models.Model):
+    registration_date = models.DateTimeField(_("Registration Date"), auto_now_add=True)
+    is_approved = models.BooleanField(_("Approved"), default=False)
+    description = models.TextField(_("Description"), blank=True, null=True)
+    student = models.ForeignKey("User",
+                                verbose_name=_("student id"),
+                                related_name="user_candidates",
+                                on_delete=models.CASCADE
+                                )
+    election = models.ForeignKey("elections.Election",
+                                 verbose_name=_("candidates"),
+                                 on_delete=models.CASCADE,
+                                 related_name="election_candidates",
+                                 null=True
+                                 )
+    def __str__(self):
+        return f"Candidate: {self.student} for {self.election}"

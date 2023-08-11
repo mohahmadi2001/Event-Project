@@ -89,19 +89,7 @@ class User(AbstractBaseUser,PermissionsMixin):
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
 
-class Candidate(models.Model):
-    student = models.ForeignKey("User",
-                                verbose_name=_("student id"),
-                                related_name="user_candidates",
-                                on_delete=models.CASCADE
-                                )
-    election = models.ForeignKey("elections.Election",
-                                 verbose_name=_("candidates"),
-                                 on_delete=models.CASCADE,
-                                 related_name="election_candidates",
-                                 null=True
-                                 )
-    
+
     
     
     
