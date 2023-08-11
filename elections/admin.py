@@ -6,7 +6,7 @@ class ElectionOptionInline(admin.TabularInline):
     extra = 1
 
 class ElectionAdmin(admin.ModelAdmin):
-    list_display = ('title', 'start_date', 'end_date', 'is_active')
+    list_display = ('title', 'started_at', 'ended_at', 'is_active')
     inlines = [ElectionOptionInline]
 
 class VoteAdmin(admin.ModelAdmin):
