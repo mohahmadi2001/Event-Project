@@ -195,7 +195,7 @@ class Candidate(SoftDeleteModel):
         self.is_approved = is_approved
         self.save()
         
-    def is_approved(self):
+    def is_candidate_approved(self):
         return self.is_approved
     
     @classmethod
@@ -213,3 +213,13 @@ class Candidate(SoftDeleteModel):
     @classmethod
     def count_approved_candidates(cls):
         return cls.objects.filter(is_approved=True).count()
+    
+    def get_full_info(self):
+        return {
+            'id': self.id,
+            'student': self.student.get_full_name(),
+            'election': self.election.title,
+            'registration_date': self.registration_date,
+            'is_approved': self.is_approved,
+            'description': self.description
+        }
