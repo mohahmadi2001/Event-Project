@@ -12,7 +12,7 @@ class Event(models.Model):
     participants = models.PositiveIntegerField(_("Participants"), default=0)
     capacity = models.PositiveIntegerField(_("Capacity"), default=0) 
     event_image = models.ImageField(_("Event Image"), upload_to='event_images/', blank=True, null=True)
-    student_id = models.ForeignKey("accounts.User",
+    student = models.ForeignKey("accounts.User",
                                    verbose_name=_("student id"),
                                    related_name="events_as_student",
                                    on_delete=models.CASCADE
@@ -31,7 +31,7 @@ class Event(models.Model):
 
 class EventType(models.Model):
     type = models.CharField(_("type"), max_length=50)
-    event_id = models.ForeignKey("Event",
+    event = models.ForeignKey("Event",
                                  verbose_name=_("event_id"),
                                  on_delete=models.CASCADE
                                  )

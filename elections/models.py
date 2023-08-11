@@ -11,7 +11,7 @@ class Election(models.Model):
     start_date = models.DateTimeField(_("start date"))
     end_date = models.DateTimeField(_("end date"))
     participants = models.ManyToManyField("accounts.User", related_name="participated_elections")
-    student_id = models.ForeignKey("accounts.User",
+    student = models.ForeignKey("accounts.User",
                                    verbose_name=_("student id"),
                                    related_name="election_as_student",
                                    on_delete=models.CASCADE
@@ -46,7 +46,7 @@ class Election(models.Model):
         results = {}
 
         for option in options:
-            vote_count = option.vote_set.count()
+            vote_count = option.votes.count()
             results[option.title] = vote_count
 
         return results
@@ -80,8 +80,14 @@ class ElectionOption(models.Model):
     
 class Vote(models.Model):
     user = models.ForeignKey("accounts.User", on_delete=models.CASCADE)
-    election = models.ForeignKey(Election, on_delete=models.CASCADE, related_name="votes")
-    option = models.ForeignKey(ElectionOption, on_delete=models.CASCADE)
+    election = models.ForeignKey(Election,
+                                 on_delete=models.CASCADE,
+                                 related_name="votes"
+                                 )
+    option = models.ForeignKey(ElectionOption,
+                               on_delete=models.CASCADE
+                               )
+    
     
     class Meta:
         unique_together = ('user', 'election')

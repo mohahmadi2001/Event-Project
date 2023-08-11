@@ -37,8 +37,8 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
 
-class User(AbstractBaseUser, PermissionsMixin):
-    student_id = models.IntegerField(_("student id"),primary_key=True,db_index=True,unique=True)
+class User(AbstractBaseUser,PermissionsMixin):
+    student = models.IntegerField(_("student id"),primary_key=True,db_index=True,unique=True)
     first_name = models.CharField(_("first name"), max_length=150, blank=True)
     last_name = models.CharField(_("last name"), max_length=150, blank=True)
     email = models.EmailField(_("email address"), unique=True)
@@ -64,8 +64,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     EMAIL_FIELD = "email"
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
-    
-    
+
     class Meta:
         verbose_name = _("user")
         verbose_name_plural = _("users")
@@ -91,5 +90,19 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Candidate(models.Model):
-    student = models.ForeignKey("User", verbose_name=_("student id"), on_delete=models.CASCADE)
-    election = models.ForeignKey("election.Election", verbose_name=_("candidates"), on_delete=models.CASCADE, related_name="candidates", null=True)
+    student = models.ForeignKey("User",
+                                verbose_name=_("student id"),
+                                related_name="user_candidates",
+                                on_delete=models.CASCADE
+                                )
+    election = models.ForeignKey("elections.Election",
+                                 verbose_name=_("candidates"),
+                                 on_delete=models.CASCADE,
+                                 related_name="election_candidates",
+                                 null=True
+                                 )
+    
+    
+    
+    
+    
