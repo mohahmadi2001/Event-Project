@@ -161,6 +161,8 @@ class Vote(SoftDeleteModel):
     
     
 class Candidate(SoftDeleteModel):
+    first_name = models.CharField(_("First Name"), max_length=150, blank=True)
+    last_name = models.CharField(_("Last Name"), max_length=150, blank=True)
     registration_date = models.DateTimeField(_("Registration Date"), auto_now_add=True)
     is_approved = models.BooleanField(_("Approved"), default=False)
     description = models.TextField(_("Description"), blank=True, null=True)
@@ -219,7 +221,8 @@ class Candidate(SoftDeleteModel):
     def get_full_info(self):
         return {
             'id': self.id,
-            'student': self.student.get_full_name(),
+            'first_name': self.first_name,
+            'last_name': self.last_name,
             'election': self.election.title,
             'registration_date': self.registration_date,
             'is_approved': self.is_approved,
