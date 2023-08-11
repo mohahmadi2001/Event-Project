@@ -35,6 +35,11 @@ class Election(models.Model,TimeStampMixin):
         election = cls.objects.filter(pk=election_id).first()
         return election
     
+    def update_election(self, new_title, new_description):
+        self.title = new_title
+        self.description = new_description
+        self.save()
+        return self
     
     def is_active(self):
         """
