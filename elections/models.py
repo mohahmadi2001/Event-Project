@@ -30,6 +30,11 @@ class Election(models.Model,TimeStampMixin):
         election.save()
         return election
     
+    @classmethod
+    def read_election_info(cls, election_id):
+        election = cls.objects.filter(pk=election_id).first()
+        return election
+    
     
     def is_active(self):
         """
