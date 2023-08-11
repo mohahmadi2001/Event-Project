@@ -209,3 +209,7 @@ class Candidate(SoftDeleteModel):
     @classmethod
     def count_candidates(cls):
         return cls.objects.count()
+    
+    @classmethod
+    def count_approved_candidates(cls):
+        return cls.objects.filter(is_approved=True).count()
