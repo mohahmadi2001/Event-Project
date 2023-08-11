@@ -6,7 +6,7 @@ from django.utils.translation import gettext as _
 
 # Create your models here.
 
-class Election(models.Model,TimeStampMixin):
+class Election(SoftDeleteModel,TimeStampMixin):
     title = models.CharField(_("Title"), max_length=50)
     description = models.TextField(_("description"))
     participants = models.ManyToManyField("accounts.User",
@@ -94,7 +94,7 @@ class Election(models.Model,TimeStampMixin):
     
 
    
-class ElectionOption(models.Model):
+class ElectionOption(SoftDeleteModel):
     title = models.CharField(_("Title"), max_length=50)
     description = models.TextField(_("Description"), blank=True, null=True)
     election = models.ForeignKey(Election,
@@ -126,7 +126,7 @@ class ElectionOption(models.Model):
         self.save()
         return self
     
-class Vote(models.Model):
+class Vote(SoftDeleteModel):
     user = models.ForeignKey("accounts.User", on_delete=models.CASCADE)
     election = models.ForeignKey(Election,
                                  on_delete=models.CASCADE,
