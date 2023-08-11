@@ -57,17 +57,7 @@ class Election(SoftDeleteModel,TimeStampMixin):
         now = timezone.now()
         return Election.objects.filter(start_date__lte=now, end_date__gte=now)
     
-    
-    def get_votes(self):
-        """
-        Retrieve the votes cast in this election.
-
-        This method retrieves all the votes cast in this election and returns
-        a queryset containing the Vote objects associated with this election.
-        """
-        return self.options_votes.all()
-    
-    def get_results(self):
+    def get_election_results(self):
         """
         Calculate and return the voting results for this election.
         
@@ -78,10 +68,11 @@ class Election(SoftDeleteModel,TimeStampMixin):
         results = {}
 
         for option in options:
-            vote_count = option.election_votes.count()
+            vote_count = option.options_votes.count()
             results[option.title] = vote_count
 
         return results
+    
     
     def register_participant(self, user):
         """
