@@ -137,9 +137,14 @@ class Vote(SoftDeleteModel):
                                related_name="options_votes"
                                )
     
-    
     class Meta:
         unique_together = ('user', 'election')
+        
+    @classmethod
+    def create_vote(cls, user, election, option):
+        vote = cls(user=user, election=election, option=option)
+        vote.save()
+        return vote
         
     def save(self, *args, **kwargs):
         """
