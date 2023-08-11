@@ -201,3 +201,7 @@ class Candidate(SoftDeleteModel):
     @classmethod
     def get_approved_candidates(cls):
         return cls.objects.filter(is_approved=True)
+    
+    @classmethod
+    def get_candidates_by_election(cls, election_id):
+        return cls.objects.filter(election_id=election_id)
