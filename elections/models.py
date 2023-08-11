@@ -41,12 +41,22 @@ class Election(models.Model,TimeStampMixin):
         self.save()
         return self
     
-    def is_active(self):
+    def is_active_election(self):
         """
         Check if the election is currently active.
         """
         now = timezone.now()
         return self.started_at <= now <= self.ended_at
+    
+    @staticmethod
+    def get_active_elections():
+        """
+        Retrieve a queryset of active elections.
+
+        """
+        now = timezone.now()
+        return Election.objects.filter(start_date__lte=now, end_date__gte=now)
+    
     
     def get_votes(self):
         """
@@ -81,14 +91,7 @@ class Election(models.Model,TimeStampMixin):
         self.participants.add(user)
         return True
 
-    @staticmethod
-    def get_active_elections():
-        """
-        Retrieve a queryset of active elections.
-
-        """
-        now = timezone.now()
-        return Election.objects.filter(start_date__lte=now, end_date__gte=now)
+    
 
    
 class ElectionOption(models.Model):
