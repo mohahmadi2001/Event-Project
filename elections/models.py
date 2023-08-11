@@ -114,6 +114,11 @@ class ElectionOption(models.Model):
         )
         option.save()
         return option
+    
+    @classmethod
+    def read_ElectionOption_info(cls, option_id):
+        option = cls.objects.filter(pk=option_id).first()
+        return option
 
     
 class Vote(models.Model):
