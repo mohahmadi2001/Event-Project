@@ -151,11 +151,9 @@ class Vote(SoftDeleteModel):
         self.save()
         return self
         
-    def save(self, *args, **kwargs):
-        """
-        Save the vote object after checking if the associated election is active.
-        """
-        super().save(*args, **kwargs)
+    @classmethod
+    def get_votes_count_for_option(cls, option):
+        return cls.objects.filter(option=option).count()
     
     
 class Candidate(SoftDeleteModel):
