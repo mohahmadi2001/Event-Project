@@ -20,6 +20,17 @@ class Election(models.Model,TimeStampMixin):
     def __str__(self):
         return self.title
     
+    @classmethod
+    def create_election(cls, title, description, student):
+        election = cls(
+            title=title,
+            description=description,
+            student=student
+        )
+        election.save()
+        return election
+    
+    
     def is_active(self):
         """
         Check if the election is currently active.
