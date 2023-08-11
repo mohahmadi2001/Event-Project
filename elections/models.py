@@ -205,3 +205,7 @@ class Candidate(SoftDeleteModel):
     @classmethod
     def get_candidates_by_election(cls, election_id):
         return cls.objects.filter(election_id=election_id)
+    
+    @classmethod
+    def count_candidates(cls):
+        return cls.objects.count()
