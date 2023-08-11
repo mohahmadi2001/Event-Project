@@ -186,6 +186,10 @@ class Candidate(SoftDeleteModel):
         candidate.save()
         return candidate
     
+    @classmethod
+    def read_candidate_info(cls, candidate_id):
+        return cls.objects.filter(pk=candidate_id).first()
+    
     def update_candidate(self, description=None, is_approved=None):
         if description is not None:
             self.description = description
