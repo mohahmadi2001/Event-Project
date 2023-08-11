@@ -145,6 +145,11 @@ class Vote(SoftDeleteModel):
         vote = cls(user=user, election=election, option=option)
         vote.save()
         return vote
+    
+    @classmethod
+    def read_vote_info(cls, vote_id):
+        vote = cls.objects.filter(pk=vote_id).first()
+        return vote
         
     def save(self, *args, **kwargs):
         """
