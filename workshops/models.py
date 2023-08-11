@@ -10,10 +10,14 @@ class Event(models.Model,TimeStampMixin):
     location = models.TextField(_("location"))
     participants = models.PositiveIntegerField(_("Participants"), default=0)
     capacity = models.PositiveIntegerField(_("Capacity"), default=0) 
-    event_image = models.ImageField(_("Event Image"), upload_to='event_images/', blank=True, null=True)
+    image = models.ImageField(_("Event Image"),
+                                    upload_to='event_images/',
+                                    blank=True,
+                                    null=True
+                                    )
     student = models.ForeignKey("accounts.User",
                                    verbose_name=_("student id"),
-                                   related_name="events_as_student",
+                                   related_name="events",
                                    on_delete=models.CASCADE
                                    )
     def __str__(self):
@@ -23,7 +27,7 @@ class Event(models.Model,TimeStampMixin):
         """
         Register a user as a participant in the event.
         """
-        user.events_as_student.add(self)
+        user.events.add(self)
         self.participants += 1
         self.save()
             
@@ -32,7 +36,8 @@ class EventType(models.Model):
     type = models.CharField(_("type"), max_length=50)
     event = models.ForeignKey("Event",
                                  verbose_name=_("event_id"),
-                                 on_delete=models.CASCADE
+                                 on_delete=models.CASCADE,
+                                 related_name="event_type"
                                  )
     def __str__(self):
         return self.type

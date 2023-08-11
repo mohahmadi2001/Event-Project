@@ -1,16 +1,17 @@
 from datetime import timezone
 from django.db import models
 from django.forms import ValidationError
+from core.models import SoftDeleteModel,TimeStampMixin
 from django.utils.translation import gettext as _
 
 # Create your models here.
 
-class Election(models.Model):
+class Election(models.Model,TimeStampMixin):
     title = models.CharField(_("Title"), max_length=50)
     description = models.TextField(_("description"))
-    start_date = models.DateTimeField(_("start date"))
-    end_date = models.DateTimeField(_("end date"))
-    participants = models.ManyToManyField("accounts.User", related_name="participated_elections")
+    participants = models.ManyToManyField("accounts.User",
+                                          related_name="election_as_participants"
+                                          )
     student = models.ForeignKey("accounts.User",
                                    verbose_name=_("student id"),
                                    related_name="election_as_student",
@@ -24,7 +25,7 @@ class Election(models.Model):
         Check if the election is currently active.
         """
         now = timezone.now()
-        return self.start_date <= now <= self.end_date
+        return self.started_at <= now <= self.ended_at
     
     def get_votes(self):
         """
@@ -33,7 +34,7 @@ class Election(models.Model):
         This method retrieves all the votes cast in this election and returns
         a queryset containing the Vote objects associated with this election.
         """
-        return self.vote_set.all()
+        return self.options_votes.all()
     
     def get_results(self):
         """
@@ -46,7 +47,7 @@ class Election(models.Model):
         results = {}
 
         for option in options:
-            vote_count = option.votes.count()
+            vote_count = option.election_votes.count()
             results[option.title] = vote_count
 
         return results
@@ -70,9 +71,12 @@ class Election(models.Model):
 
    
 class ElectionOption(models.Model):
-    election = models.ForeignKey(Election, on_delete=models.CASCADE, related_name="options")
     title = models.CharField(_("Title"), max_length=50)
     description = models.TextField(_("Description"), blank=True, null=True)
+    election = models.ForeignKey(Election,
+                                 on_delete=models.CASCADE,
+                                 related_name="options"
+                                 )
 
     def __str__(self):
         return self.title
@@ -82,10 +86,11 @@ class Vote(models.Model):
     user = models.ForeignKey("accounts.User", on_delete=models.CASCADE)
     election = models.ForeignKey(Election,
                                  on_delete=models.CASCADE,
-                                 related_name="votes"
+                                 related_name="election_votes"
                                  )
     option = models.ForeignKey(ElectionOption,
-                               on_delete=models.CASCADE
+                               on_delete=models.CASCADE,
+                               related_name="options_votes"
                                )
     
     
