@@ -120,6 +120,11 @@ class ElectionOption(models.Model):
         option = cls.objects.filter(pk=option_id).first()
         return option
 
+    def update_ElectionOption(self, new_title, new_description):
+        self.title = new_title
+        self.description = new_description
+        self.save()
+        return self
     
 class Vote(models.Model):
     user = models.ForeignKey("accounts.User", on_delete=models.CASCADE)
