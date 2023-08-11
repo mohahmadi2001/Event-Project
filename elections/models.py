@@ -197,3 +197,7 @@ class Candidate(SoftDeleteModel):
         
     def is_approved(self):
         return self.is_approved
+    
+    @classmethod
+    def get_approved_candidates(cls):
+        return cls.objects.filter(is_approved=True)
