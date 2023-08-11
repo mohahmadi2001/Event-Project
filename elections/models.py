@@ -133,7 +133,11 @@ class Vote(SoftDeleteModel):
         
     @classmethod
     def create_vote(cls, user, election, option):
-        vote = cls(user=user, election=election, option=option)
+        vote = cls(
+            user=user,
+            election=election,
+            option=option
+        )
         vote.save()
         return vote
     
@@ -154,7 +158,7 @@ class Vote(SoftDeleteModel):
         super().save(*args, **kwargs)
     
     
-class Candidate(models.Model):
+class Candidate(SoftDeleteModel):
     registration_date = models.DateTimeField(_("Registration Date"), auto_now_add=True)
     is_approved = models.BooleanField(_("Approved"), default=False)
     description = models.TextField(_("Description"), blank=True, null=True)
@@ -171,3 +175,20 @@ class Candidate(models.Model):
                                  )
     def __str__(self):
         return f"Candidate: {self.student} for {self.election}"
+
+    @classmethod
+    def create_candidate(cls, student, election, description=None):
+        candidate = cls(
+            student=student,
+            election=election,
+            description=description
+        )
+        candidate.save()
+        return candidate
+    
+    def update_candidate(self, description=None, is_approved=None):
+        if description is not None:
+            self.description = description
+        if is_approved is not None:
+            self.is_approved = is_approved
+        self.save()
