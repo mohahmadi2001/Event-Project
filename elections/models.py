@@ -155,6 +155,10 @@ class Vote(SoftDeleteModel):
     def get_votes_count_for_option(cls, option):
         return cls.objects.filter(option=option).count()
     
+    @classmethod
+    def get_votes_count_for_election(cls, election):
+        return Vote.objects.filter(election=election).count()
+    
     
 class Candidate(SoftDeleteModel):
     registration_date = models.DateTimeField(_("Registration Date"), auto_now_add=True)
