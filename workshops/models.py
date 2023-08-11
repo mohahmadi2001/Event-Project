@@ -1,14 +1,13 @@
 from django.db import models
 from django.utils import timezone
+from core.models import SoftDeleteModel,TimeStampMixin
 from django.utils.translation import gettext as _
 # Create your models here.
 
-class Event(models.Model):
+class Event(models.Model,TimeStampMixin):
     title = models.CharField(_("Title"), max_length=50)
     description = models.TextField(_("description"))
     location = models.TextField(_("location"))
-    start_date = models.DateTimeField(_("start date"))
-    end_date = models.DateTimeField(_("end date"))
     participants = models.PositiveIntegerField(_("Participants"), default=0)
     capacity = models.PositiveIntegerField(_("Capacity"), default=0) 
     event_image = models.ImageField(_("Event Image"), upload_to='event_images/', blank=True, null=True)
