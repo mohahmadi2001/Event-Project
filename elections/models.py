@@ -156,7 +156,7 @@ class Candidate(SoftDeleteModel):
     registration_date = models.DateTimeField(_("Registration Date"), auto_now_add=True)
     is_approved = models.BooleanField(_("Approved"), default=False)
     description = models.TextField(_("Description"), blank=True, null=True)
-    student = models.ForeignKey("User",
+    student = models.ForeignKey("accounts.User",
                                 verbose_name=_("student id"),
                                 related_name="user_candidates",
                                 on_delete=models.CASCADE
