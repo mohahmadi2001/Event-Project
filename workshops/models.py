@@ -35,6 +35,10 @@ class Event(models.Model,TimeStampMixin):
         event.save()
         return event
     
+    @classmethod
+    def read_event_info(cls, event_id):
+        return cls.objects.filter(pk=event_id).first()
+    
 
 class EventType(models.Model):
     type = models.CharField(_("type"), max_length=50)
