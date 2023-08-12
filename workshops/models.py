@@ -74,3 +74,7 @@ class EventType(models.Model):
     @classmethod
     def read_event_type(cls, event_type_id):
         return cls.objects.filter(pk=event_type_id).first()
+    
+    def update_event_type(self, type):
+        self.type = type
+        self.save()
