@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils import timezone
 from core.models import SoftDeleteModel,TimeStampMixin
 from django.utils.translation import gettext as _
 # Create your models here.
@@ -52,7 +51,7 @@ class Event(SoftDeleteModel,TimeStampMixin):
         return self
 
 
-class EventType(models.Model):
+class EventType(SoftDeleteModel):
     type = models.CharField(_("type"), max_length=50)
     event = models.ForeignKey("Event",
                                  verbose_name=_("event_id"),
