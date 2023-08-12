@@ -74,17 +74,6 @@ class Election(SoftDeleteModel,TimeStampMixin):
         return results
     
     
-    def register_participant(self, user):
-        """
-        Register a participant in the election if the conditions are met.
-
-        """ 
-        self.participants.add(user)
-        return True
-
-    
-
-   
 class ElectionOption(SoftDeleteModel):
     title = models.CharField(_("Title"), max_length=50)
     description = models.TextField(_("Description"), blank=True, null=True)
@@ -116,6 +105,7 @@ class ElectionOption(SoftDeleteModel):
         self.description = new_description
         self.save()
         return self
+    
     
 class Vote(SoftDeleteModel):
     user = models.ForeignKey("accounts.User", on_delete=models.CASCADE)
