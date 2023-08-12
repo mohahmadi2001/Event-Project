@@ -23,14 +23,18 @@ class Event(models.Model,TimeStampMixin):
     def __str__(self):
         return self.title
     
-    def register_participant(self, user):
-        """
-        Register a user as a participant in the event.
-        """
-        user.events.add(self)
-        self.participants += 1
-        self.save()
-            
+    @classmethod
+    def create_event(cls, title, description, location, capacity, student):
+        event = cls(
+            title=title,
+            description=description,
+            location=location,
+            capacity=capacity,
+            student=student
+        )
+        event.save()
+        return event
+    
 
 class EventType(models.Model):
     type = models.CharField(_("type"), max_length=50)
