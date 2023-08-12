@@ -39,6 +39,17 @@ class Event(models.Model,TimeStampMixin):
     def read_event_info(cls, event_id):
         return cls.objects.filter(pk=event_id).first()
     
+    def update_event(self, title=None, description=None, location=None, capacity=None):
+        if title is not None:
+            self.title = title
+        if description is not None:
+            self.description = description
+        if location is not None:
+            self.location = location
+        if capacity is not None:
+            self.capacity = capacity
+        self.save()
+        return self
 
 class EventType(models.Model):
     type = models.CharField(_("type"), max_length=50)
