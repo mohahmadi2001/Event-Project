@@ -4,7 +4,7 @@ from core.models import SoftDeleteModel,TimeStampMixin
 from django.utils.translation import gettext as _
 # Create your models here.
 
-class Event(models.Model,TimeStampMixin):
+class Event(SoftDeleteModel,TimeStampMixin):
     title = models.CharField(_("Title"), max_length=50)
     description = models.TextField(_("description"))
     location = models.TextField(_("location"))
@@ -51,6 +51,7 @@ class Event(models.Model,TimeStampMixin):
         self.save()
         return self
 
+
 class EventType(models.Model):
     type = models.CharField(_("type"), max_length=50)
     event = models.ForeignKey("Event",
@@ -60,3 +61,12 @@ class EventType(models.Model):
                                  )
     def __str__(self):
         return self.type
+    
+    @classmethod
+    def create_event_type(cls, type, event):
+        event_type = cls(
+            type=type,
+            event=event
+        )
+        event_type.save()
+        return event_type
