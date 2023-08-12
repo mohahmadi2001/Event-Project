@@ -70,3 +70,7 @@ class EventType(models.Model):
         )
         event_type.save()
         return event_type
+    
+    @classmethod
+    def read_event_type(cls, event_type_id):
+        return cls.objects.filter(pk=event_type_id).first()
