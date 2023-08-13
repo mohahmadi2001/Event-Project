@@ -29,19 +29,24 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
-
-INSTALLED_APPS = [
+SYSTEM_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'accounts',
-    'elections',
-    'workshops',
-    'core',
 ]
+DEVELOPED_APPS = [
+    'accounts.apps.AccountsConfig',
+    'elections.apps.ElectionsConfig',
+    'workshops.apps.WorkshopsConfig',
+    'core.apps.CoreConfig',
+]
+THIRD_PARTY_APP = [
+    'rest_framework',
+]
+INSTALLED_APPS = SYSTEM_APPS + DEVELOPED_APPS + THIRD_PARTY_APP
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
