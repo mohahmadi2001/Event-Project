@@ -25,14 +25,12 @@ class Candidate(SoftDeleteModel):
     def __str__(self):
         return f"Candidate: {self.user} for {self.election}"
 
-    
     def is_candidate_approved(self):
         return self.is_approved
     
     @classmethod
     def get_approved_candidates(cls):
         return cls.objects.filter(is_approved=True)
-    
     
     def get_candidate_info(self):
         return {
@@ -47,8 +45,8 @@ class Election(SoftDeleteModel,TimeStampMixin):
     description = models.TextField(_("description"))
     capacity = models.IntegerField(_("capacity"))
     candidate = models.ManyToManyField(Candidate,
-                                          related_name="election_as_candidate"
-                                          )
+                                        elated_name="election_as_candidate"
+                                        )
     user = models.ForeignKey("accounts.User",
                                    verbose_name=_("user id"),
                                    related_name="election_as_user",
