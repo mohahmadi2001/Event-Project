@@ -14,8 +14,8 @@ class Event(SoftDeleteModel,TimeStampMixin):
                                     blank=True,
                                     null=True
                                     )
-    student = models.ForeignKey("accounts.User",
-                                   verbose_name=_("student id"),
+    user = models.ForeignKey("accounts.User",
+                                   verbose_name=_("user id"),
                                    related_name="events",
                                    on_delete=models.CASCADE
                                    )
@@ -23,13 +23,13 @@ class Event(SoftDeleteModel,TimeStampMixin):
         return self.title
     
     @classmethod
-    def create_event(cls, title, description, location, capacity, student):
+    def create_event(cls, title, description, location, capacity, user):
         event = cls(
             title=title,
             description=description,
             location=location,
             capacity=capacity,
-            student=student
+            user=user
         )
         event.save()
         return event
