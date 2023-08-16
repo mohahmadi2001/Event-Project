@@ -20,29 +20,12 @@ class Candidate(SoftDeleteModel):
                                  on_delete=models.CASCADE,
                                  related_name="election_candidates",
                                  null=True
-                                 )
+                                )
+    
     def __str__(self):
         return f"Candidate: {self.user} for {self.election}"
 
-    @classmethod
-    def create_candidate(cls, user, election, description=None):
-        candidate = cls(
-            user=user,
-            election=election,
-            description=description
-        )
-        candidate.save()
-        return candidate
     
-    @classmethod
-    def read_candidate_info(cls, candidate_id):
-        return cls.objects.filter(pk=candidate_id).first()
-    
-    def update_candidate(self, description=None, is_approved=None):
-        self.description = description
-        self.is_approved = is_approved
-        self.save()
-        
     def is_candidate_approved(self):
         return self.is_approved
     
@@ -50,33 +33,19 @@ class Candidate(SoftDeleteModel):
     def get_approved_candidates(cls):
         return cls.objects.filter(is_approved=True)
     
-    @classmethod
-    def get_candidates_by_election(cls, election_id):
-        return cls.objects.filter(election_id=election_id)
     
-    @classmethod
-    def count_candidates(cls):
-        return cls.objects.count()
-    
-    @classmethod
-    def count_approved_candidates(cls):
-        return cls.objects.filter(is_approved=True).count()
-    
-    def get_full_info(self):
+    def get_candidate_info(self):
         return {
             'id': self.id,
             'first_name': self.first_name,
             'last_name': self.last_name,
-            'election': self.election.title,
-            'registration_date': self.registration_date,
-            'is_approved': self.is_approved,
-            'description': self.description
         }
 
 
 class Election(SoftDeleteModel,TimeStampMixin):
     title = models.CharField(_("Title"), max_length=50)
     description = models.TextField(_("description"))
+    capacity = models.IntegerField(_("capacity"))
     candidate = models.ManyToManyField(Candidate,
                                           related_name="election_as_candidate"
                                           )
@@ -85,29 +54,9 @@ class Election(SoftDeleteModel,TimeStampMixin):
                                    related_name="election_as_user",
                                    on_delete=models.CASCADE
                                    )
+    
     def __str__(self):
         return self.title
-    
-    @classmethod
-    def create_election(cls, title, description, user):
-        election = cls(
-            title=title,
-            description=description,
-            user=user
-        )
-        election.save()
-        return election
-    
-    @classmethod
-    def read_election_info(cls, election_id):
-        election = cls.objects.filter(pk=election_id).first()
-        return election
-    
-    def update_election(self, new_title, new_description):
-        self.title = new_title
-        self.description = new_description
-        self.save()
-        return self
     
     def is_active_election(self):
         """
@@ -116,64 +65,12 @@ class Election(SoftDeleteModel,TimeStampMixin):
         now = timezone.now()
         return self.started_at <= now <= self.ended_at
     
-    @staticmethod
-    def get_active_elections():
-        """
-        Retrieve a queryset of active elections.
-
-        """
-        now = timezone.now()
-        return Election.objects.filter(start_date__lte=now, end_date__gte=now)
-    
     def get_election_results(self):
-        """
-        Calculate and return the voting results for this election.
-        
-        This method calculates the vote count for each option in the election
-        and returns a dictionary containing the option titles and their respective vote counts.
-        """
-        options = self.options.all()
-        results = {}
-
-        for option in options:
-            vote_count = option.options_votes.count()
-            results[option.title] = vote_count
-
-        return results
-    
-    
-class ElectionOption(SoftDeleteModel):
-    title = models.CharField(_("Title"), max_length=50)
-    description = models.TextField(_("Description"), blank=True, null=True)
-    election = models.ForeignKey(Election,
-                                 on_delete=models.CASCADE,
-                                 related_name="options"
-                                 )
-
-    def __str__(self):
-        return self.title
-    
-    @classmethod
-    def create_ElectionOption(cls, title, description, election):
-        option = cls(
-            title=title,
-            description=description,
-            election=election
-        )
-        option.save()
-        return option
-    
-    @classmethod
-    def read_ElectionOption_info(cls, option_id):
-        option = cls.objects.filter(pk=option_id).first()
-        return option
-
-    def update_ElectionOption(self, new_title, new_description):
-        self.title = new_title
-        self.description = new_description
-        self.save()
-        return self
-    
+        candidates_with_votes = []
+        for candidate in self.get_active_candidates():
+            votes_count = Vote.get_votes_count_for_candidate(candidate)
+            candidates_with_votes.append((candidate, votes_count))
+        return candidates_with_votes
     
 class Vote(SoftDeleteModel):
     user = models.ForeignKey("accounts.User", on_delete=models.CASCADE)
@@ -181,37 +78,13 @@ class Vote(SoftDeleteModel):
                                  on_delete=models.CASCADE,
                                  related_name="election_votes"
                                  )
-    option = models.ForeignKey(ElectionOption,
-                               on_delete=models.CASCADE,
-                               related_name="options_votes"
-                               )
     
     class Meta:
         unique_together = ('user', 'election')
         
     @classmethod
-    def create_vote(cls, user, election, option):
-        vote = cls(
-            user=user,
-            election=election,
-            option=option
-        )
-        vote.save()
-        return vote
-    
-    @classmethod
-    def read_vote_info(cls, vote_id):
-        vote = cls.objects.filter(pk=vote_id).first()
-        return vote
-    
-    def update_vote(self, new_option):
-        self.option = new_option
-        self.save()
-        return self
-        
-    @classmethod
-    def get_votes_count_for_option(cls, option):
-        return cls.objects.filter(option=option).count()
+    def get_votes_count_for_candidate(cls, candidate):
+        return cls.objects.filter(candidate=candidate).count()
     
     @classmethod
     def get_votes_count_for_election(cls, election):
