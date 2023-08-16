@@ -45,7 +45,7 @@ class Election(SoftDeleteModel,TimeStampMixin):
     description = models.TextField(_("description"))
     capacity = models.IntegerField(_("capacity"))
     candidate = models.ManyToManyField(Candidate,
-                                        elated_name="election_as_candidate"
+                                        related_name="election_as_candidate"
                                         )
     user = models.ForeignKey("accounts.User",
                                    verbose_name=_("user id"),
