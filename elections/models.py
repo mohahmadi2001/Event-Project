@@ -1,4 +1,4 @@
-from datetime import timezone
+from django.utils import timezone
 from django.db import models
 from core.models import SoftDeleteModel,TimeStampMixin
 from django.utils.translation import gettext as _
@@ -13,11 +13,12 @@ class Candidate(SoftDeleteModel):
     registration_date = models.DateTimeField(_("Registration Date"), auto_now_add=True)
     is_approved = models.BooleanField(_("Approved"), default=False)
     election = models.ForeignKey("elections.Election",
-                                 verbose_name=_("candidates"),
+                                 verbose_name=_("Election Title"),
                                  on_delete=models.CASCADE,
                                  related_name="election_candidates",
                                  null=True
                                 )
+    
     
     def __str__(self):
         return self.student_number
@@ -37,18 +38,14 @@ class Candidate(SoftDeleteModel):
         }
 
 
-class Election(SoftDeleteModel,TimeStampMixin):
+class Election(SoftDeleteModel):
     title = models.CharField(_("Title"), max_length=50)
     description = models.TextField(_("description"))
     capacity = models.IntegerField(_("capacity"))
-    candidate = models.ManyToManyField(Candidate,
-                                        related_name="election_as_candidate"
-                                        )
-    user = models.ForeignKey("accounts.User",
-                                   verbose_name=_("user id"),
-                                   related_name="election_as_user",
-                                   on_delete=models.CASCADE
-                                   )
+    election_started_at = models.DateTimeField(_("Election Start"))
+    election_ended_at = models.DateTimeField(_("Election End"))
+    candidate_registration_start = models.DateTimeField(_("Candidate Registration Start"))
+    candidate_registration_end = models.DateTimeField(_("Candidate Registration End"))
     
     def __str__(self):
         return self.title
@@ -58,7 +55,7 @@ class Election(SoftDeleteModel,TimeStampMixin):
         Check if the election is currently active.
         """
         now = timezone.now()
-        return self.started_at <= now <= self.ended_at
+        return self.election_started_at <= now <= self.election_ended_at
     
     def get_election_results(self):
         candidates_with_votes = []
