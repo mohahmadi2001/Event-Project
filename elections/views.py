@@ -20,3 +20,4 @@ class CandidateRegistrationView(CreateAPIView):
             {"message": "Candidate registered successfully."},
             status=status.HTTP_201_CREATED
         )
+

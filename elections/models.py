@@ -9,14 +9,9 @@ class Candidate(SoftDeleteModel):
     first_name = models.CharField(_("First Name"), max_length=150, blank=True)
     last_name = models.CharField(_("Last Name"), max_length=150, blank=True)
     mobile = models.CharField(_("mobile number"), max_length=11, unique=True, blank=True, null=True)
-    student_number = models.CharField(_("student number"), max_length=50, blank=True,null=True)
+    student_number = models.CharField(_("student number"), max_length=50, blank=True,null=True,unique=True)
     registration_date = models.DateTimeField(_("Registration Date"), auto_now_add=True)
     is_approved = models.BooleanField(_("Approved"), default=False)
-    user = models.ForeignKey("accounts.User",
-                                verbose_name=_("user id"),
-                                related_name="user_candidates",
-                                on_delete=models.CASCADE
-                                )
     election = models.ForeignKey("elections.Election",
                                  verbose_name=_("candidates"),
                                  on_delete=models.CASCADE,
@@ -25,7 +20,7 @@ class Candidate(SoftDeleteModel):
                                 )
     
     def __str__(self):
-        return f"Candidate: {self.user} for {self.election}"
+        return self.student_number
 
     def is_candidate_approved(self):
         return self.is_approved
