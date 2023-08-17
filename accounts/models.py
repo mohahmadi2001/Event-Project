@@ -44,7 +44,11 @@ class User(AbstractBaseUser,PermissionsMixin):
     mobile = models.CharField(_("mobile number"), max_length=11, unique=True, blank=True, null=True)
     is_student = models.BooleanField(_("student status"),default=True)
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
-
+    student_number = models.CharField(_("student number"), max_length=50, blank=True,null=True)
+    is_staff = models.BooleanField(
+        _("staff status"),
+        default=False,
+    )
     objects = UserManager()
 
     EMAIL_FIELD = "email"
@@ -66,10 +70,6 @@ class User(AbstractBaseUser,PermissionsMixin):
         full_name = "%s %s" % (self.first_name, self.last_name)
         return full_name.strip()
 
-
-    def email_user(self, subject, message, from_email=None, **kwargs):
-        """Send an email to this user."""
-        send_mail(subject, message, from_email, [self.email], **kwargs)
 
 
 

@@ -1,8 +1,11 @@
 from rest_framework.generics import CreateAPIView
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate
+from django.core.exceptions import ValidationError
+from django.contrib.auth.password_validation import validate_password
 from .serializers import UserRegistrationSerializer, UserLoginSerializer
 
 User = get_user_model()
@@ -20,6 +23,14 @@ class UserRegistrationView(CreateAPIView):
         if is_student and student_number is None:
             return Response(
                 {"error": "Student number is required for students."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        try:
+            validate_password(serializer.validated_data.get('password'))
+        except ValidationError as e:
+            return Response(
+                {"error": e.messages},
                 status=status.HTTP_400_BAD_REQUEST
             )
         

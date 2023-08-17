@@ -7,8 +7,6 @@ User = get_user_model()
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     confirm_password = serializers.CharField(write_only=True)
-    student_number = serializers.CharField(write_only=True, required=False)
-    
     class Meta:
         model = User
         fields = (
@@ -29,10 +27,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Student number is required for students.")
         return data
     
+    
     def create(self, validated_data):
+        validated_data.pop('confirm_password') 
         validated_data['password'] = make_password(validated_data.get('password'))
         return super().create(validated_data)
-    
 
 class UserLoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
