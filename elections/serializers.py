@@ -1,17 +1,20 @@
 from rest_framework import serializers
 from .models import Candidate, Election, Vote
 
-class ElectionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Election
-        fields = '__all__'
-
-class CandidateSerializer(serializers.ModelSerializer):
+class CandidateRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Candidate
-        fields = '__all__'
+        fields = (
+            'first_name',
+            'last_name',
+            'mobile',
+            'student_number'
+        )
+        
+    def validate(self, data):
+        required_fields = ['first_name', 'last_name', 'mobile', 'student_number']
+        for field in required_fields:
+            if not data.get(field):
+                raise serializers.ValidationError(f"{field} is required.")
+        return data
 
-class VoteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Vote
-        fields = '__all__'
