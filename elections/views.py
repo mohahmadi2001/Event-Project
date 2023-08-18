@@ -13,7 +13,7 @@ class CandidateRegistrationView(CreateAPIView):
 
     def get_remaining_registration_time(self, election):
         now = timezone.now()
-        remaining_time = election.candidate_registration_start - now
+        remaining_time = election.candidate_registration_end - now
         remaining_days = remaining_time.days
         remaining_hours = remaining_time.seconds // 3600
         remaining_minutes = (remaining_time.seconds // 60) % 60
