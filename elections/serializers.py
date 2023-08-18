@@ -35,4 +35,12 @@ class CandidateRegistrationSerializer(serializers.ModelSerializer):
 class ApprovedCandidateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Candidate
-        fields = ('student_number', 'first_name', 'last_name','entry_year')
+        fields = ('id', 'first_name', 'last_name')
+
+
+class VoteSerializer(serializers.Serializer):
+    candidate_id = serializers.PrimaryKeyRelatedField(queryset=Candidate.get_approved_candidates())
+
+
+class ElectionVoteSerializer(serializers.Serializer):
+    candidates = VoteSerializer(many=True)

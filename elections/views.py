@@ -2,8 +2,8 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
-from elections.models import Election,Candidate
-from .serializers import CandidateRegistrationSerializer,ApprovedCandidateSerializer
+from elections.models import Election,Candidate,Vote
+from .serializers import CandidateRegistrationSerializer,ElectionVoteSerializer
 
 class CandidateRegistrationView(CreateAPIView):
     serializer_class = CandidateRegistrationSerializer
@@ -35,8 +35,8 @@ class CandidateRegistrationView(CreateAPIView):
 
 
 
-class ElectionApprovedCandidatesView(APIView):
-    def get(self, request, election_slug):
+class ElectionVoteView(APIView):
+    def post(self, request, election_slug):
         try:
             election = Election.objects.get(slug=election_slug)
         except Election.DoesNotExist:
@@ -45,6 +45,18 @@ class ElectionApprovedCandidatesView(APIView):
         if not election.is_active_election():
             return Response({"error": "Election is not currently active."}, status=status.HTTP_400_BAD_REQUEST)
 
-        approved_candidates = Candidate.get_approved_candidates().filter(election=election)
-        serializer = ApprovedCandidateSerializer(approved_candidates, many=True)
-        return Response(serializer.data)
+        serializer = ElectionVoteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        candidates_data = serializer.validated_data['candidates']
+        if len(candidates_data) > 5:
+            return Response({"error": "You can vote for up to 5 candidates."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = request.user  # or wherever you get the user from
+        for candidate_data in candidates_data:
+            candidate_id = candidate_data['candidate_id']
+            candidate = Candidate.objects.get(pk=candidate_id)
+            # Create a vote for the user and candidate
+            Vote.objects.create(user=user, candidate=candidate)
+
+        return Response({"message": "Votes submitted successfully."}, status=status.HTTP_201_CREATED)
