@@ -1,9 +1,9 @@
 from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 from rest_framework import status
-
-from elections.models import Election
-from .serializers import CandidateRegistrationSerializer
+from rest_framework.views import APIView
+from elections.models import Election,Candidate
+from .serializers import CandidateRegistrationSerializer,ApprovedCandidateSerializer
 
 class CandidateRegistrationView(CreateAPIView):
     serializer_class = CandidateRegistrationSerializer
@@ -33,3 +33,18 @@ class CandidateRegistrationView(CreateAPIView):
             status=status.HTTP_201_CREATED
         )
 
+
+
+class ElectionApprovedCandidatesView(APIView):
+    def get(self, request, election_slug):
+        try:
+            election = Election.objects.get(slug=election_slug)
+        except Election.DoesNotExist:
+            return Response({"error": "Election not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        if not election.is_active_election():
+            return Response({"error": "Election is not currently active."}, status=status.HTTP_400_BAD_REQUEST)
+
+        approved_candidates = Candidate.get_approved_candidates().filter(election=election)
+        serializer = ApprovedCandidateSerializer(approved_candidates, many=True)
+        return Response(serializer.data)

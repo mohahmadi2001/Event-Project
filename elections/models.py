@@ -1,7 +1,8 @@
 from django.utils import timezone
 from django.db import models
-from core.models import SoftDeleteModel,TimeStampMixin
+from core.models import SoftDeleteModel
 from django.utils.translation import gettext as _
+from django.utils.text import slugify
 
 # Create your models here.
 
@@ -10,6 +11,7 @@ class Candidate(SoftDeleteModel):
     last_name = models.CharField(_("Last Name"), max_length=150, blank=True)
     mobile = models.CharField(_("mobile number"), max_length=11, unique=True, blank=True, null=True)
     student_number = models.CharField(_("student number"), max_length=50, blank=True,null=True,unique=True)
+    entry_year = models.PositiveIntegerField(_("Entry Year"), blank=True, null=True)
     registration_date = models.DateTimeField(_("Registration Date"), auto_now_add=True)
     is_approved = models.BooleanField(_("Approved"), default=False)
     election = models.ForeignKey("elections.Election",
@@ -32,14 +34,16 @@ class Candidate(SoftDeleteModel):
     
     def get_candidate_info(self):
         return {
-            'id': self.id,
+            'student_number': self.student_number,
             'first_name': self.first_name,
             'last_name': self.last_name,
+            'entry_year': self.entry_year,
         }
 
 
 class Election(SoftDeleteModel):
     title = models.CharField(_("Title"), max_length=50)
+    slug = models.SlugField(_("Slug"), unique=True)
     description = models.TextField(_("description"))
     capacity = models.IntegerField(_("capacity"))
     election_started_at = models.DateTimeField(_("Election Start"))

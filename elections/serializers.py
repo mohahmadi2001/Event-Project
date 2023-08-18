@@ -10,6 +10,7 @@ class CandidateRegistrationSerializer(serializers.ModelSerializer):
             'last_name',
             'mobile',
             'student_number',
+            'entry_year',
             'election'
         )
         
@@ -30,3 +31,8 @@ class CandidateRegistrationSerializer(serializers.ModelSerializer):
         
         return data
 
+
+class ApprovedCandidateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Candidate
+        fields = ('student_number', 'first_name', 'last_name','entry_year')
