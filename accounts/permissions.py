@@ -1,6 +1,6 @@
 from rest_framework import permissions
 
-class IsStudentWithNumber(permissions.BasePermission):
+class IsStudent(permissions.BasePermission):
     """
     Custom permission to only allow users who are students with a student number.
     """

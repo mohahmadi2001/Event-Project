@@ -45,6 +45,7 @@ class User(AbstractBaseUser,PermissionsMixin):
     is_student = models.BooleanField(_("student status"),default=True)
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
     student_number = models.CharField(_("student number"), max_length=50, blank=True,null=True)
+    has_voted = models.BooleanField(_("has voted"), default=False)
     is_staff = models.BooleanField(
         _("staff status"),
         default=False,

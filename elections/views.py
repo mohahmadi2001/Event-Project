@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from elections.models import Election,Candidate,Vote
 from .serializers import CandidateRegistrationSerializer,ElectionVoteSerializer
+from accounts.permissions import IsStudent
 
 class CandidateRegistrationView(CreateAPIView):
     serializer_class = CandidateRegistrationSerializer
@@ -36,7 +37,14 @@ class CandidateRegistrationView(CreateAPIView):
 
 
 class ElectionVoteView(APIView):
+    permission_classes = [IsStudent]
+    
     def post(self, request, election_slug):
+        user = request.user
+        
+        if user.has_voted:
+            return Response({"error": "You have already voted."}, status=status.HTTP_400_BAD_REQUEST)
+        
         try:
             election = Election.objects.get(slug=election_slug)
         except Election.DoesNotExist:
@@ -51,12 +59,15 @@ class ElectionVoteView(APIView):
         candidates_data = serializer.validated_data['candidates']
         if len(candidates_data) > 5:
             return Response({"error": "You can vote for up to 5 candidates."}, status=status.HTTP_400_BAD_REQUEST)
-
-        user = request.user  # or wherever you get the user from
+        
         for candidate_data in candidates_data:
             candidate_id = candidate_data['candidate_id']
             candidate = Candidate.objects.get(pk=candidate_id)
-            # Create a vote for the user and candidate
+            
             Vote.objects.create(user=user, candidate=candidate)
+        
 
+        user.has_voted = True
+        user.save()
+        
         return Response({"message": "Votes submitted successfully."}, status=status.HTTP_201_CREATED)

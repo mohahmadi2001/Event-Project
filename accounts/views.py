@@ -3,10 +3,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import get_user_model
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate,login,logout
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from .serializers import UserRegistrationSerializer, UserLoginSerializer
+
 
 User = get_user_model()
 
@@ -59,7 +60,17 @@ class UserLoginView(APIView):
         user = authenticate(email=email, password=password)
 
         if user is not None:
+            login(request, user)  # احراز هویت و ایجاد جلسه ورود
             return Response({"message": "User logged in successfully."}, status=status.HTTP_200_OK)
         else:
             return Response({"error": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED)
 
+
+class UserLogoutView(APIView):
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        logout(request)
+        return Response({"message": "User logged out successfully."}, status=status.HTTP_200_OK)

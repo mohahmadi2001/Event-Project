@@ -50,9 +50,9 @@ THIRD_PARTY_APP = [
 INSTALLED_APPS = SYSTEM_APPS + DEVELOPED_APPS + THIRD_PARTY_APP
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',  
-    ),
+    # 'DEFAULT_AUTHENTICATION_CLASSES': (
+    #     'rest_framework.authentication.TokenAuthentication',  
+    # ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',  
     ),
@@ -141,3 +141,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache' 
+SESSION_COOKIE_AGE = 1800  
