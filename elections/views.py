@@ -5,12 +5,24 @@ from rest_framework.views import APIView
 from elections.models import Election,Candidate,Vote
 from .serializers import CandidateRegistrationSerializer,ElectionVoteSerializer
 from accounts.permissions import IsStudent
+from django.utils import timezone
+
 
 class CandidateRegistrationView(CreateAPIView):
     serializer_class = CandidateRegistrationSerializer
 
+    def get_remaining_registration_time(self, election):
+        now = timezone.now()
+        remaining_time = election.candidate_registration_start - now
+        remaining_days = remaining_time.days
+        remaining_hours = remaining_time.seconds // 3600
+        remaining_minutes = (remaining_time.seconds // 60) % 60
+        remaining_seconds = remaining_time.seconds % 60
+        
+        return f"{remaining_days} days, {remaining_hours} hours, {remaining_minutes} minutes, {remaining_seconds} seconds"
+    
     def create(self, request, *args, **kwargs):
-        election_id = request.data.get('election')  # Assuming 'election' is the field name
+        election_id = request.data.get('election') 
         try:
             election = Election.objects.get(pk=election_id)
         except Election.DoesNotExist:
@@ -19,7 +31,8 @@ class CandidateRegistrationView(CreateAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-
+        remaining_time_str = self.get_remaining_registration_time(election)
+        
         serializer = self.get_serializer(data=request.data,context={'election': election})
         serializer.is_valid(raise_exception=True)
 
@@ -30,7 +43,7 @@ class CandidateRegistrationView(CreateAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
         return Response(
-            {"message": "Candidate registered successfully."},
+            {"message": "Candidate registered successfully.", "remaining_time": remaining_time_str},
             status=status.HTTP_201_CREATED
         )
 
@@ -38,6 +51,16 @@ class CandidateRegistrationView(CreateAPIView):
 
 class ElectionVoteView(APIView):
     permission_classes = [IsStudent]
+    
+    def get_remaining_election_time(self, election):
+        now = timezone.now()
+        remaining_time = election.election_ended_at - now
+        remaining_days = remaining_time.days
+        remaining_hours = remaining_time.seconds // 3600
+        remaining_minutes = (remaining_time.seconds // 60) % 60
+        remaining_seconds = remaining_time.seconds % 60
+        
+        return f"{remaining_days} days, {remaining_hours} hours, {remaining_minutes} minutes, {remaining_seconds} seconds"
     
     def post(self, request, election_slug):
         user = request.user
@@ -53,6 +76,8 @@ class ElectionVoteView(APIView):
         if not election.is_active_election():
             return Response({"error": "Election is not currently active."}, status=status.HTTP_400_BAD_REQUEST)
 
+        remaining_time_str = self.get_remaining_time(election)
+        
         serializer = ElectionVoteSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         
@@ -70,4 +95,10 @@ class ElectionVoteView(APIView):
         user.has_voted = True
         user.save()
         
-        return Response({"message": "Votes submitted successfully."}, status=status.HTTP_201_CREATED)
+        return Response(
+                    {
+                        "message": "Votes submitted successfully.",
+                        "remaining_time": remaining_time_str 
+                    },
+                    status=status.HTTP_201_CREATED
+                )
