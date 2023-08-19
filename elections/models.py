@@ -39,7 +39,23 @@ class Candidate(SoftDeleteModel):
             'last_name': self.last_name,
             'entry_year': self.entry_year,
         }
+        
+    def get_candidates_with_votes_ordered_by_votes(self):
+        candidates_with_votes = []
+        for candidate in self.election_candidates.all():
+            votes_count = Vote.get_votes_count_for_candidate(candidate)
+            candidates_with_votes.append({
+                "candidate": {
+                    "id": candidate.id,
+                    "first_name": candidate.first_name,
+                    "last_name": candidate.last_name,
+                    "entry_year":candidate.entry_year,
+                },
+                "votes_count": votes_count
+            })
 
+        candidates_with_votes.sort(key=lambda x: x["votes_count"], reverse=True)
+        return candidates_with_votes
 
 class Election(SoftDeleteModel):
     title = models.CharField(_("Title"), max_length=50)
@@ -61,12 +77,29 @@ class Election(SoftDeleteModel):
         now = timezone.now()
         return self.election_started_at <= now <= self.election_ended_at
     
-    def get_election_results(self):
-        candidates_with_votes = []
-        for candidate in self.get_active_candidates():
-            votes_count = Vote.get_votes_count_for_candidate(candidate)
-            candidates_with_votes.append((candidate, votes_count))
-        return candidates_with_votes
+    
+    def get_remaining_election_time(self, election):
+        now = timezone.now()
+        remaining_time = election.election_ended_at - now
+        remaining_days = remaining_time.days
+        remaining_hours = remaining_time.seconds // 3600
+        remaining_minutes = (remaining_time.seconds // 60) % 60
+        remaining_seconds = remaining_time.seconds % 60
+        
+        return f"{remaining_days} days, {remaining_hours} hours, {remaining_minutes} minutes, {remaining_seconds} seconds"
+    
+    def get_remaining_registration_time(self, election):
+        now = timezone.now()
+        remaining_time = election.candidate_registration_end - now
+        remaining_days = remaining_time.days
+        remaining_hours = remaining_time.seconds // 3600
+        remaining_minutes = (remaining_time.seconds // 60) % 60
+        remaining_seconds = remaining_time.seconds % 60
+        
+        return f"{remaining_days} days, {remaining_hours} hours, {remaining_minutes} minutes, {remaining_seconds} seconds"
+    
+    
+    
     
 class Vote(SoftDeleteModel):
     user = models.ForeignKey("accounts.User", on_delete=models.CASCADE)
@@ -86,4 +119,4 @@ class Vote(SoftDeleteModel):
     def get_votes_count_for_election(cls, election):
         return Vote.objects.filter(election=election).count()
     
-    
+   

@@ -44,3 +44,24 @@ class VoteSerializer(serializers.Serializer):
 
 class ElectionVoteSerializer(serializers.Serializer):
     candidates = VoteSerializer(many=True)
+    
+    
+class CandidateWithVotesSerializer(serializers.Serializer):
+    candidate = serializers.SerializerMethodField()
+    votes_count = serializers.IntegerField()
+
+    def get_candidate(self, obj):
+        candidate = obj["candidate"]
+        return {
+            "id": candidate.id,
+            "first_name": candidate.first_name,
+            "last_name": candidate.last_name,
+            "entry_year": candidate.entry_year
+        }
+
+class ElectionResultsSerializer(serializers.Serializer):
+    candidates_with_votes = CandidateWithVotesSerializer(many=True)
+    total_participants = serializers.IntegerField()
+    total_candidates = serializers.IntegerField()
+
+    

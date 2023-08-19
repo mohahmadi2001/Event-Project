@@ -1,27 +1,18 @@
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import ListCreateAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from elections.models import Election,Candidate,Vote
-from .serializers import CandidateRegistrationSerializer,ElectionVoteSerializer
+from .serializers import CandidateRegistrationSerializer,ElectionVoteSerializer,ElectionResultsSerializer
 from accounts.permissions import IsStudent
 from django.utils import timezone
 
 
-class CandidateRegistrationView(CreateAPIView):
+class CandidateRegistrationView(ListCreateAPIView):
     serializer_class = CandidateRegistrationSerializer
 
-    def get_remaining_registration_time(self, election):
-        now = timezone.now()
-        remaining_time = election.candidate_registration_end - now
-        remaining_days = remaining_time.days
-        remaining_hours = remaining_time.seconds // 3600
-        remaining_minutes = (remaining_time.seconds // 60) % 60
-        remaining_seconds = remaining_time.seconds % 60
-        
-        return f"{remaining_days} days, {remaining_hours} hours, {remaining_minutes} minutes, {remaining_seconds} seconds"
-    
-    def create(self, request, *args, **kwargs):
+
+    def create(self, request):
         election_id = request.data.get('election') 
         try:
             election = Election.objects.get(pk=election_id)
@@ -31,7 +22,6 @@ class CandidateRegistrationView(CreateAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        remaining_time_str = self.get_remaining_registration_time(election)
         
         serializer = self.get_serializer(data=request.data,context={'election': election})
         serializer.is_valid(raise_exception=True)
@@ -43,24 +33,30 @@ class CandidateRegistrationView(CreateAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
         return Response(
-            {"message": "Candidate registered successfully.", "remaining_time": remaining_time_str},
+            {"message": "Candidate registered successfully."},
             status=status.HTTP_201_CREATED
         )
+        
+    def get(self, request, *args, **kwargs):
+        election_id = request.query_params.get('election_id')
+        try:
+            election = Election.objects.get(pk=election_id)
+        except Election.DoesNotExist:
+            return Response(
+                {"error": "Election does not exist."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
+        remaining_registration_time = election.get_remaining_registration_time()
 
-
+        return Response(
+            {"remaining_registration_time": remaining_registration_time},
+            status=status.HTTP_200_OK
+        )
+    
+   
 class ElectionVoteView(APIView):
     permission_classes = [IsStudent]
-    
-    def get_remaining_election_time(self, election):
-        now = timezone.now()
-        remaining_time = election.election_ended_at - now
-        remaining_days = remaining_time.days
-        remaining_hours = remaining_time.seconds // 3600
-        remaining_minutes = (remaining_time.seconds // 60) % 60
-        remaining_seconds = remaining_time.seconds % 60
-        
-        return f"{remaining_days} days, {remaining_hours} hours, {remaining_minutes} minutes, {remaining_seconds} seconds"
     
     def post(self, request, election_slug):
         user = request.user
@@ -76,7 +72,7 @@ class ElectionVoteView(APIView):
         if not election.is_active_election():
             return Response({"error": "Election is not currently active."}, status=status.HTTP_400_BAD_REQUEST)
 
-        remaining_time_str = self.get_remaining_time(election)
+        # remaining_election_time = election.get_remaining_election_time(election)
         
         serializer = ElectionVoteSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -98,7 +94,9 @@ class ElectionVoteView(APIView):
         return Response(
                     {
                         "message": "Votes submitted successfully.",
-                        "remaining_time": remaining_time_str 
+                        # "remaining_election_time": remaining_election_time 
                     },
                     status=status.HTTP_201_CREATED
                 )
+    
+
