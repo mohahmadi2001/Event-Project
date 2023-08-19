@@ -1,0 +1,82 @@
+import React, { useState, useEffect } from "react";
+import logo from "./sciconnect.png";
+import Nav from "react-bootstrap/Nav";
+import Navbar from "react-bootstrap/Navbar";
+import SearchBar from "./SearchBar";
+import SignUpLoginComponent from "./SignUpLoginComponent";
+import { Link } from "react-router-dom";
+
+export default function NavigationBar() {
+  //Implementing Sticky Nav Bar
+  const [isSticky, setIsSticky] = useState(false);
+  function handleSticky() {
+    if (window.scrollY > 150) setIsSticky(true);
+    else setIsSticky(false);
+  }
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleSticky);
+    return () => {
+      window.removeEventListener("scroll", handleSticky);
+    };
+  }, []);
+  //Scroll to Top of the Pages
+  const scrollToTop = () => {
+    window.scrollTo(0, 0); // Scroll to the top of the page
+  };
+
+  return (
+    <Navbar expand="lg" className={`navbar ${isSticky ? "sticky" : ""}`}>
+      <Navbar.Brand href="#home" className="navbarBrand" onClick={scrollToTop}>
+        <img src={logo} alt="sciconnect-logo" width={120} />
+        SciConnect
+      </Navbar.Brand>
+      <SearchBar />
+      <Navbar.Toggle aria-controls="basic-navbar-nav" />
+      <Navbar.Collapse id="basic-navbar-nav">
+        <Nav className="ms-auto nav">
+          <Nav.Link
+            as={Link}
+            to="/contact-us"
+            className="navLink"
+            onClick={scrollToTop}
+          >
+            تماس با ما
+          </Nav.Link>
+
+          <Nav.Link
+            as={Link}
+            to="/about-us"
+            className="navLink"
+            onClick={scrollToTop}
+          >
+            درباره ما
+          </Nav.Link>
+
+          <Nav.Link
+            as={Link}
+            to="/election"
+            className="navLink"
+            onClick={scrollToTop}
+          >
+            انتخابات
+          </Nav.Link>
+
+          <Nav.Link
+            as={Link}
+            to="/events"
+            className="navLink"
+            onClick={scrollToTop}
+          >
+            رویدادها / کارگاه‌ها
+          </Nav.Link>
+
+          <Nav.Link as={Link} to="/" className="navLink" onClick={scrollToTop}>
+            خانه
+          </Nav.Link>
+        </Nav>
+      </Navbar.Collapse>
+      <SignUpLoginComponent />
+    </Navbar>
+  );
+}

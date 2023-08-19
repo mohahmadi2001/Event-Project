@@ -1,0 +1,25 @@
+.contact-us-container {
+  min-height: 80vh;
+}
+
+.contact-us-title-sp {
+  color: var(--main-navy-blue);
+  text-align: right;
+  margin-right: 100px;
+  margin-top: 20px;
+  margin-bottom: 15px;
+}
+
+.contact-us-text-sp {
+  direction: rtl;
+  margin-left: 200px;
+  margin-right: 200px;
+  margin-bottom: 65px;
+  font-size: 18px;
+}
+
+.social-sp {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-start;
+}
