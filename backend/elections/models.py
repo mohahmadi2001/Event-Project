@@ -21,6 +21,8 @@ class Candidate(SoftDeleteModel):
                                  null=True
                                 )
     
+
+    
     
     def __str__(self):
         return self.student_number
@@ -40,22 +42,9 @@ class Candidate(SoftDeleteModel):
             'entry_year': self.entry_year,
         }
         
-    def get_candidates_with_votes_ordered_by_votes(self):
-        candidates_with_votes = []
-        for candidate in self.election_candidates.all():
-            votes_count = Vote.get_votes_count_for_candidate(candidate)
-            candidates_with_votes.append({
-                "candidate": {
-                    "id": candidate.id,
-                    "first_name": candidate.first_name,
-                    "last_name": candidate.last_name,
-                    "entry_year":candidate.entry_year,
-                },
-                "votes_count": votes_count
-            })
-
-        candidates_with_votes.sort(key=lambda x: x["votes_count"], reverse=True)
-        return candidates_with_votes
+    
+        
+    
 
 class Election(SoftDeleteModel):
     title = models.CharField(_("Title"), max_length=50)
@@ -66,6 +55,7 @@ class Election(SoftDeleteModel):
     election_ended_at = models.DateTimeField(_("Election End"))
     candidate_registration_start = models.DateTimeField(_("Candidate Registration Start"))
     candidate_registration_end = models.DateTimeField(_("Candidate Registration End"))
+    candidates = models.ManyToManyField("elections.Candidate", related_name="elections")
     
     def __str__(self):
         return self.title
@@ -76,7 +66,6 @@ class Election(SoftDeleteModel):
         """
         now = timezone.now()
         return self.election_started_at <= now <= self.election_ended_at
-    
     
     def get_remaining_election_time(self, election):
         now = timezone.now()
@@ -98,6 +87,22 @@ class Election(SoftDeleteModel):
         
         return f"{remaining_days} days, {remaining_hours} hours, {remaining_minutes} minutes, {remaining_seconds} seconds"
     
+    def get_candidates_with_votes_ordered_by_votes(self):
+        candidates_with_votes = []
+        for candidate in self.candidates.all():
+            votes_count = Vote.get_votes_count_for_candidate(candidate)
+            candidates_with_votes.append({
+                "candidate": {
+                    "id": candidate.id,
+                    "first_name": candidate.first_name,
+                    "last_name": candidate.last_name,
+                    "entry_year": candidate.entry_year,
+                },
+                "votes_count": votes_count
+            })
+
+        candidates_with_votes.sort(key=lambda x: x["votes_count"], reverse=True)
+        return candidates_with_votes
     
     
     
