@@ -100,3 +100,21 @@ class ElectionVoteView(APIView):
                 )
     
 
+class ElectionResultsView(APIView):
+    def get(self, request, election_slug):
+        try:
+            election = Election.objects.get(slug=election_slug)
+        except Election.DoesNotExist:
+            return Response({"error": "Election not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        candidates_with_votes = election.get_candidates_with_votes_ordered_by_votes()
+        total_participants = election.election_votes.count()
+        total_candidates = election.election_candidates.filter(is_approved=True).count()
+
+        data = {
+            "candidates_with_votes": candidates_with_votes,
+            "total_participants": total_participants,
+            "total_candidates": total_candidates
+        }
+
+        return Response(data, status=status.HTTP_200_OK)
