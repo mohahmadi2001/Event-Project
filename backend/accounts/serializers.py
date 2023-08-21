@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
+from workshops.models import Event
 
 User = get_user_model()
 
@@ -33,6 +34,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         validated_data['password'] = make_password(validated_data.get('password'))
         return super().create(validated_data)
 
+
 class UserLoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField()
@@ -41,3 +43,19 @@ class UserLoginSerializer(serializers.Serializer):
         fields = ('email', 'password')
 
 
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name', 'email', 'mobile', 'is_student', 'student_number']
+        
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'mobile', 'student_number']
+    
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+    
