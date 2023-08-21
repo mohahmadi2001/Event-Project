@@ -44,7 +44,7 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
     password: "",
     confirm_password: "",
     student_number: "",
-    is_student: isChecked,
+    is_student: true,
   });
   console.log(formData);
   function handleChange(e) {
@@ -53,7 +53,7 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
     setFormData(newFormData);
   }
 
-  const url = "http://127.0.0.1:8000/swagger";
+  const url = "http://127.0.0.1:8000/accounts/user-registration/";
   function handleSubmit() {
     fetch(url, {
       method: "POST",
