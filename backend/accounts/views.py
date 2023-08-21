@@ -66,7 +66,7 @@ class UserLoginView(APIView):
         user = authenticate(email=email, password=password)
 
         if user is not None:
-            login(request, user)  # احراز هویت و ایجاد جلسه ورود
+            login(request, user)  
             return Response({"message": "User logged in successfully."}, status=status.HTTP_200_OK)
         else:
             return Response({"error": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED)
