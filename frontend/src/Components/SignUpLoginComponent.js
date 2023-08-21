@@ -43,7 +43,8 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
     mobile: "",
     password: "",
     confirm_password: "",
-    student_id: "",
+    student_number: "",
+    is_student: isChecked,
   });
   console.log(formData);
   function handleChange(e) {
@@ -52,7 +53,7 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
     setFormData(newFormData);
   }
 
-  const url = "http://127.0.0.1:8000/accounts/user-registration/";
+  const url = "http://127.0.0.1:8000/swagger";
   function handleSubmit() {
     fetch(url, {
       method: "POST",
@@ -193,8 +194,8 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
                       <input
                         type="text"
                         className="text-input"
-                        value={formData.student_id}
-                        name="student_id"
+                        value={formData.student_number}
+                        name="student_number"
                         onChange={handleChange}
                       />
                       <label className="label">شماره دانشجویی</label>

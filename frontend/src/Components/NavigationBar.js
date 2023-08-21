@@ -76,6 +76,9 @@ export default function NavigationBar() {
           </Nav.Link>
         </Nav>
       </Navbar.Collapse>
+      <a href="/profile">
+        <img src="profile.png" alt="profile-icon" className="profile-icon" />
+      </a>
       <SignUpLoginComponent />
     </Navbar>
   );

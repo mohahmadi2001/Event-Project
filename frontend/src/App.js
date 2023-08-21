@@ -9,6 +9,7 @@ import ElectionContainer from "./Pages/ElectionComponents/ElectionContainer";
 import ParticipateElection from "./Pages/ElectionComponents/ParticipateElection";
 import RegisterCandidate from "./Pages/ElectionComponents/RegisterCandidate";
 import Results from "./Pages/ElectionComponents/Results";
+import Profile from "./Pages/ProfileComponents/Profile";
 import "./index.css";
 
 export default function App() {
@@ -22,6 +23,7 @@ export default function App() {
       <NavigationBar />
       <Routes>
         <Route exact path="/" element={<HomePageContainer />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/events" element={<EventsContainer />} />
         <Route path="/election" element={<ElectionContainer />} />
         <Route

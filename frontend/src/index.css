@@ -93,6 +93,7 @@ body {
 
 .signup-login-button {
   margin-right: 15px;
+  margin-left: 20px;
   display: flex;
   padding: 7px;
   background-color: var(--main-orange);
@@ -104,6 +105,11 @@ body {
 .signup-login-button:hover,
 .signup-login-button:active {
   background-color: var(--main-navy-blue);
+}
+
+.profile-icon {
+  width: 30px;
+  height: 30px;
 }
 
 /* Footer Styles */
