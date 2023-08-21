@@ -77,6 +77,8 @@ class User(AbstractBaseUser,PermissionsMixin):
         full_name = "%s %s" % (self.first_name, self.last_name)
         return full_name.strip()
 
+    def add_registered_event(self, event):
+        self.event.add(event)
 
 
 

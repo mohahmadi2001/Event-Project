@@ -13,4 +13,14 @@ class EventDetailSerializer(serializers.ModelSerializer):
         model = Event
         exclude = ("is_deleted",)
         
+
+
+class EventRegistrationSerializer(serializers.Serializer):
+    event_id = serializers.IntegerField()
     
+
+class RegisteredEventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Event
+        fields = ['title', 'location', 'start_event_at', 'end_event_at']
+
