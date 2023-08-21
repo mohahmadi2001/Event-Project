@@ -3,3 +3,4 @@ pillow==9.5.0
 djangorestframework==3.14.0
 markdown
 django-filter
+drf-yasg
