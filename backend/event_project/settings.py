@@ -49,6 +49,7 @@ THIRD_PARTY_APP = [
     'drf_spectacular',
     'rest_framework.authtoken',
     'corsheaders',
+    'djoser',
 
 ]
 INSTALLED_APPS = SYSTEM_APPS + DEVELOPED_APPS + THIRD_PARTY_APP
@@ -120,6 +121,10 @@ SPECTACULAR_SETTINGS = {
     'SERVE_INCLUDE_SCHEMA': False,
 }
 
+
+
+DOMAIN = 'localhost:3000'
+SITE_NAME = 'localhost:3000'
 
 
 # Password validation

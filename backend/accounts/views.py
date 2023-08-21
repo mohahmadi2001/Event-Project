@@ -13,7 +13,7 @@ from .serializers import (UserRegistrationSerializer,
                           ChangePasswordSerializer,
                         )
 from django.contrib.auth.hashers import check_password
-
+from rest_framework.authtoken.models import Token
 
 User = get_user_model()
 
@@ -53,6 +53,8 @@ class UserRegistrationView(CreateAPIView):
         )
 
 
+
+
 class UserLoginView(APIView):
     serializer_class = UserLoginSerializer
 
@@ -66,10 +68,22 @@ class UserLoginView(APIView):
         user = authenticate(email=email, password=password)
 
         if user is not None:
-            login(request, user)  
-            return Response({"message": "User logged in successfully."}, status=status.HTTP_200_OK)
+            login(request, user)
+            
+
+            token, created = Token.objects.get_or_create(user=user)
+            
+
+            user.token = token.key
+            user.save()
+            
+            return Response({
+                "message": "User logged in successfully.",
+                "token": token.key
+            }, status=status.HTTP_200_OK)
         else:
             return Response({"error": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED)
+
 
 
 class UserLogoutView(APIView):
