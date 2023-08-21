@@ -5,8 +5,8 @@ from .views import (UserRegistrationView,
                     UserProfileView,
                     UserProfileUpdateView,
                     ChangePasswordView,
-                    UserProfileRegisteredEventsView
                 )
+from workshops.views import RegisteredEventListView
 
 app_name = 'accounts'
 urlpatterns = [
@@ -16,5 +16,5 @@ urlpatterns = [
     path('profile/', UserProfileView.as_view(), name='user-profile'),
     path('profile/update/', UserProfileUpdateView.as_view(), name='user-profile-update'),
     path('profile/change-password/', ChangePasswordView.as_view(), name='change-password'),
-    path('profile/registered-events/', UserProfileRegisteredEventsView.as_view(), name='user-registered-events'),
+    path('profile/registered-events/', RegisteredEventListView.as_view(), name='user-registered-events'),
 ]
