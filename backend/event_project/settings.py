@@ -49,7 +49,7 @@ THIRD_PARTY_APP = [
     'drf_spectacular',
     'rest_framework.authtoken',
     'corsheaders',
-    'djoser',
+    
 
 ]
 INSTALLED_APPS = SYSTEM_APPS + DEVELOPED_APPS + THIRD_PARTY_APP
@@ -119,7 +119,9 @@ SPECTACULAR_SETTINGS = {
     'TITLE': 'event-project API',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
+    
 }
+
 
 
 
