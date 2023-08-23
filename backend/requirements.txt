@@ -5,3 +5,4 @@ markdown
 django-filter
 drf-spectacular==0.26.1
 django-cors-headers==3.13.0
+djangorestframework_simplejwt
