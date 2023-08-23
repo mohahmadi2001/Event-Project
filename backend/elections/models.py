@@ -42,10 +42,7 @@ class Candidate(SoftDeleteModel):
             'entry_year': self.entry_year,
         }
         
-    
-        
-    
-
+       
 class Election(SoftDeleteModel):
     title = models.CharField(_("Title"), max_length=50)
     slug = models.SlugField(_("Slug"), unique=True)
@@ -55,7 +52,7 @@ class Election(SoftDeleteModel):
     election_ended_at = models.DateTimeField(_("Election End"))
     candidate_registration_start = models.DateTimeField(_("Candidate Registration Start"))
     candidate_registration_end = models.DateTimeField(_("Candidate Registration End"))
-    candidates = models.ManyToManyField("elections.Candidate", related_name="elections")
+    candidates = models.ManyToManyField("elections.Candidate", related_name="elections",blank=True)
     
     def __str__(self):
         return self.title
@@ -104,8 +101,7 @@ class Election(SoftDeleteModel):
         candidates_with_votes.sort(key=lambda x: x["votes_count"], reverse=True)
         return candidates_with_votes
     
-    
-    
+       
 class Vote(SoftDeleteModel):
     user = models.ForeignKey("accounts.User", on_delete=models.CASCADE)
     election = models.ForeignKey(Election,
