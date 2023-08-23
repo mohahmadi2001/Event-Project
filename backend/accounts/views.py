@@ -13,7 +13,7 @@ from .serializers import (UserRegistrationSerializer,
                           ChangePasswordSerializer,
                         )
 from django.contrib.auth.hashers import check_password
-from rest_framework_simplejwt.tokens import RefreshToken
+# from rest_framework_simplejwt.tokens import RefreshToken
 
 User = get_user_model()
 
