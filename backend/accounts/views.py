@@ -53,8 +53,6 @@ class UserRegistrationView(CreateAPIView):
         )
 
 
-
-
 class UserLoginView(APIView):
     serializer_class = UserLoginSerializer
 
@@ -68,16 +66,35 @@ class UserLoginView(APIView):
         user = authenticate(email=email, password=password)
 
         if user is not None:
-            login(request, user)
-            refresh = RefreshToken.for_user(user)
-            
-            return Response({
-                "message": "User logged in successfully.",
-                "access_token": str(refresh.access_token),
-                "refresh_token": str(refresh)
-            }, status=status.HTTP_200_OK)
+            login(request, user) 
+            return Response({"message": "User logged in successfully."}, status=status.HTTP_200_OK)
         else:
             return Response({"error": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+# class UserLoginView(APIView):
+#     serializer_class = UserLoginSerializer
+
+#     def post(self, request, *args, **kwargs):
+#         serializer = self.serializer_class(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+
+#         email = serializer.validated_data['email']
+#         password = serializer.validated_data['password']
+
+#         user = authenticate(email=email, password=password)
+
+#         if user is not None:
+#             login(request, user)
+#             refresh = RefreshToken.for_user(user)
+            
+#             return Response({
+#                 "message": "User logged in successfully.",
+#                 "access_token": str(refresh.access_token),
+#                 "refresh_token": str(refresh)
+#             }, status=status.HTTP_200_OK)
+#         else:
+#             return Response({"error": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class UserLogoutView(APIView):

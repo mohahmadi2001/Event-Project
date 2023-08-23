@@ -10,7 +10,7 @@ from django.utils import timezone
 
 class CandidateRegistrationView(ListCreateAPIView):
     serializer_class = CandidateRegistrationSerializer
-
+    queryset = Candidate.objects.all()
 
     def create(self, request):
         election_id = request.data.get('election') 
@@ -36,24 +36,7 @@ class CandidateRegistrationView(ListCreateAPIView):
             {"message": "Candidate registered successfully."},
             status=status.HTTP_201_CREATED
         )
-        
-    def get(self, request, *args, **kwargs):
-        election_id = request.query_params.get('election_id')
-        try:
-            election = Election.objects.get(pk=election_id)
-        except Election.DoesNotExist:
-            return Response(
-                {"error": "Election does not exist."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        remaining_registration_time = election.get_remaining_registration_time()
-
-        return Response(
-            {"remaining_registration_time": remaining_registration_time},
-            status=status.HTTP_200_OK
-        )
-    
+           
    
 class ElectionVoteView(APIView):
     permission_classes = [IsStudent]
