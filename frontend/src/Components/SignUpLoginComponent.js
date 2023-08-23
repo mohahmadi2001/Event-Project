@@ -2,6 +2,8 @@ import React from "react";
 import { useState } from "react";
 import { Modal, Button } from "antd";
 import { ModalAntd } from "./ModalAntd";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function SignUpLoginComponent() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -33,10 +35,12 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
   //Check wether the user is student or not
   const [isChecked, setIsChecked] = useState(false);
 
-  //Form Validation
+  //Form Errors / Form Successful
+  const [formErrors, setFormErrors] = useState({});
+  const [formSuccess, setFormSuccess] = useState();
 
-  //Send form data to server-side
-  const [formData, setFormData] = useState({
+  //Send register form data to server-side
+  const [formDataRegister, setFormDataRegister] = useState({
     first_name: "",
     last_name: "",
     email: "",
@@ -44,36 +48,102 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
     password: "",
     confirm_password: "",
     student_number: "",
-    is_student: true,
+    is_student: isChecked,
   });
-  console.log(formData);
-  function handleChange(e) {
-    let newFormData = { ...formData };
-    newFormData[e.target.name] = e.target.value;
-    setFormData(newFormData);
+  // console.log(formDataRegister.is_student);
+  function handleChangeRegister(e) {
+    let newFormDataRegister = { ...formDataRegister };
+    if (e.target.name === "is_student") {
+      newFormDataRegister[e.target.name] = !isChecked;
+      setIsChecked(!isChecked);
+    } else newFormDataRegister[e.target.name] = e.target.value;
+    setFormDataRegister(newFormDataRegister);
   }
 
-  const url = "http://127.0.0.1:8000/accounts/user-registration/";
-  function handleSubmit() {
-    fetch(url, {
+  const urlRegister = "http://127.0.0.1:8000/accounts/user-registration/";
+  function handleRegister() {
+    // console.log("Data to be send:", formDataRegister);
+    fetch(urlRegister, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(formData),
+      body: JSON.stringify(formDataRegister),
     })
       .then((response) => response.json())
       .then((data) => {
         console.log("Server response:", data);
+        if (data.message) {
+          toast.success("ثبت‌نام با موفقیت انجام شد", {
+            position: toast.POSITION.TOP_CENTER,
+            autoClose: 2000, // Auto close after 2 seconds
+          });
+        } else {
+          // console.log(data.email[0]);
+          if (data.email) return alert("Email address can't be empty.");
+          if (data.password) return alert("Password can't be empty.");
+          if (data.confirm_password)
+            return alert("Confirm Password can't be empty");
+        }
       })
       .catch((error) => {
         console.error("Fetch error:", error);
       });
+    setFormDataRegister({
+      first_name: "",
+      last_name: "",
+      email: "",
+      mobile: "",
+      password: "",
+      confirm_password: "",
+      student_number: "",
+      is_student: isChecked,
+    });
+  }
+
+  //Send login form data to backend server
+  const [formDataLogin, setFormDataLogin] = useState({
+    email: "",
+    password: "",
+  });
+
+  function handleChangeLogin(e) {
+    let newFormDataLogin = { ...formDataLogin };
+    newFormDataLogin[e.target.name] = e.target.value;
+    setFormDataLogin(newFormDataLogin);
+  }
+
+  const urlLogin = "http://127.0.0.1:8000/accounts/user-login/";
+  function handleLogin() {
+    console.log("Data to be send:", formDataLogin);
+    fetch(urlLogin, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formDataLogin),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Server response:", data);
+        if (data.message)
+          toast.success("ثبت‌نام با موفقیت انجام شد", {
+            position: toast.POSITION.TOP_CENTER,
+            autoClose: 2000, // Auto close after 2 seconds
+          });
+      })
+      .catch((error) => {
+        console.error("Fetch error:", error);
+      });
+    setFormDataLogin({
+      email: "",
+      password: "",
+    });
   }
 
   const handleOk = () => {
     setIsModalOpen(false);
-    handleSubmit();
+    showSignUp ? handleRegister() : handleLogin();
   };
 
   //Toggle Forms
@@ -81,6 +151,20 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
 
   const toggleForm = () => {
     setShowSignUp(!showSignUp);
+    setFormDataRegister({
+      first_name: "",
+      last_name: "",
+      email: "",
+      mobile: "",
+      password: "",
+      confirm_password: "",
+      student_number: "",
+      is_student: isChecked,
+    });
+    setFormDataLogin({
+      email: "",
+      password: "",
+    });
   };
 
   return (
@@ -96,7 +180,7 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
             لغو
           </Button>,
           <Button key="submit" type="primary" onClick={handleOk}>
-            ثبت‌نام
+            {showSignUp ? "ثبت‌نام" : "ورود"}
           </Button>,
         ]}
       >
@@ -125,29 +209,27 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
                   <input
                     type="text"
                     className="text-input"
-                    value={formData.first_name}
+                    value={formDataRegister.first_name}
                     name="first_name"
-                    onChange={handleChange}
-                    required
+                    onChange={handleChangeRegister}
                   />
                   <label className="label">نام</label>
 
                   <input
                     type="text"
                     className="text-input"
-                    value={formData.last_name}
+                    value={formDataRegister.last_name}
                     name="last_name"
-                    onChange={handleChange}
-                    required
+                    onChange={handleChangeRegister}
                   />
                   <label className="label">نام خانوادگی</label>
 
                   <input
                     type="email"
                     className="text-input"
-                    value={formData.email}
+                    value={formDataRegister.email}
                     name="email"
-                    onChange={handleChange}
+                    onChange={handleChangeRegister}
                     required
                   />
                   <label className="label">ایمیل</label>
@@ -155,19 +237,18 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
                   <input
                     type="text"
                     className="text-input"
-                    value={formData.mobile}
+                    value={formDataRegister.mobile}
                     name="mobile"
-                    onChange={handleChange}
-                    required
+                    onChange={handleChangeRegister}
                   />
                   <label className="label">شماره تماس</label>
 
                   <input
                     type="password"
                     className="password-input"
-                    value={formData.password}
+                    value={formDataRegister.password}
                     name="password"
-                    onChange={handleChange}
+                    onChange={handleChangeRegister}
                     required
                   />
                   <label className="label">رمز عبور</label>
@@ -175,9 +256,9 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
                   <input
                     type="password"
                     className="password-input password-repeat"
-                    value={formData.confirm_password}
+                    value={formDataRegister.confirm_password}
                     name="confirm_password"
-                    onChange={handleChange}
+                    onChange={handleChangeRegister}
                     required
                   />
                   <label className="label">تکرار رمز عبور</label>
@@ -185,7 +266,9 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
                   <input
                     type="checkbox"
                     className="text-input"
-                    onChange={() => setIsChecked(!isChecked)}
+                    value={formDataRegister.is_student}
+                    name="is_student"
+                    onChange={handleChangeRegister}
                   />
                   <label className="label">:دانشجو هستم</label>
 
@@ -194,9 +277,9 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
                       <input
                         type="text"
                         className="text-input"
-                        value={formData.student_number}
+                        value={formDataRegister.student_number}
                         name="student_number"
-                        onChange={handleChange}
+                        onChange={handleChangeRegister}
                       />
                       <label className="label">شماره دانشجویی</label>
                     </>
@@ -206,12 +289,23 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
             ) : (
               <>
                 <div className="login-form">
-                  <input type="text" className="text-input" />
+                  <input
+                    type="text"
+                    className="text-input"
+                    value={formDataLogin.email}
+                    name="email"
+                    onChange={handleChangeLogin}
+                    required
+                  />
                   <label className="label">نام کاربری</label>
 
                   <input
                     type="password"
                     className="password-input password-login"
+                    value={formDataLogin.password}
+                    name="password"
+                    onChange={handleChangeLogin}
+                    required
                   />
                   <label className="label">رمز عبور</label>
                 </div>

@@ -211,6 +211,7 @@ body {
   background-color: transparent;
   border-radius: 5px;
   direction: rtl;
+  /* position: relative; */
 }
 
 .password-input {
@@ -232,4 +233,13 @@ input[type="password"] {
 .ant-modal .ant-modal-footer {
   text-align: center;
   margin-bottom: 12px;
+}
+
+/* .email-error {
+  color: rgb(194, 66, 66);
+  position: absolute;
+} */
+
+.success-message {
+  color: green;
 }
