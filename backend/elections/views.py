@@ -11,14 +11,11 @@ from .serializers import  (
                            ApprovedCandidateSerializer
                         )
 from accounts.permissions import IsStudent
-from django.utils import timezone
+from rest_framework.permissions import IsAuthenticated
 
 
-class CandidateRegistrationView(ListCreateAPIView):
-    serializer_class = CandidateRegistrationSerializer
-    queryset = Candidate.objects.all()
-
-    def create(self, request):
+class CandidateRegistrationView(APIView):
+    def post(self, request):
         election_id = request.data.get('election') 
         try:
             election = Election.objects.get(pk=election_id)
@@ -28,8 +25,7 @@ class CandidateRegistrationView(ListCreateAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        
-        serializer = self.get_serializer(data=request.data,context={'election': election})
+        serializer = CandidateRegistrationSerializer(data=request.data, context={'election': election})
         serializer.is_valid(raise_exception=True)
 
         candidate = serializer.save()
@@ -111,6 +107,7 @@ class ElectionResultsView(APIView):
 
 class ApprovedCandidateListView(ListAPIView):
     serializer_class = ApprovedCandidateSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Candidate.get_approved_candidates()
