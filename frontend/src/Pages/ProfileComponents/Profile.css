@@ -9,3 +9,9 @@
   margin-top: 20px;
   margin-bottom: 45px;
 }
+
+.buttons-profile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

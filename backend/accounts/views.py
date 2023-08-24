@@ -1,23 +1,25 @@
 from rest_framework.generics import CreateAPIView
-from rest_framework.generics import UpdateAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import get_user_model
+from django.contrib.auth import authenticate,login,logout
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
-from .serializers import (
-                          CustomRegistrationSerializer,
+from .serializers import (UserRegistrationSerializer,
+                          UserLoginSerializer,
+                          UserProfileSerializer,
                           UserUpdateSerializer,
+                          ChangePasswordSerializer,
                         )
-from rest_framework.permissions import AllowAny
+from django.contrib.auth.hashers import check_password
+
 
 User = get_user_model()
 
 class UserRegistrationView(CreateAPIView):
-    permission_classes = [AllowAny]
     queryset = User.objects.all()
-    serializer_class = CustomRegistrationSerializer
+    serializer_class = UserRegistrationSerializer
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -51,19 +53,65 @@ class UserRegistrationView(CreateAPIView):
         )
 
 
-class UserUpdateView(UpdateAPIView):
-    serializer_class = UserUpdateSerializer
-    permission_classes = [IsAuthenticated]
+class UserLoginView(APIView):
+    serializer_class = UserLoginSerializer
 
-    def get_object(self):
-        return self.request.user
-
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        return Response(serializer.data)
+
+        email = serializer.validated_data['email']
+        password = serializer.validated_data['password']
+
+        user = authenticate(email=email, password=password)
+
+        if user is not None:
+            login(request, user)  # احراز هویت و ایجاد جلسه ورود
+            return Response({"message": "User logged in successfully."}, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+class UserLogoutView(APIView):
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        logout(request)
+        return Response({"message": "User logged out successfully."}, status=status.HTTP_200_OK)
+
+
+class UserProfileView(APIView):
+    def get(self, request):
+        user = request.user
+        serializer = UserProfileSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class UserProfileUpdateView(APIView):
+    def put(self, request):
+        user = request.user
+        serializer = UserUpdateSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
+class ChangePasswordView(APIView):
+    def put(self, request):
+        user = request.user
+        serializer = ChangePasswordSerializer(data=request.data)
+        if serializer.is_valid():
+            old_password = serializer.validated_data.get('old_password')
+            new_password = serializer.validated_data.get('new_password')
+
+            if not check_password(old_password, user.password):
+                return Response({"error": "Invalid old password."}, status=status.HTTP_400_BAD_REQUEST)
+
+            user.set_password(new_password)
+            user.save()
+            return Response({"message": "Password changed successfully."}, status=status.HTTP_200_OK)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

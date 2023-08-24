@@ -33,7 +33,7 @@ export default function Profile() {
           </label>
         </div>
       </div>
-      <div className="buttons">
+      <div className="buttons-profile">
         <button className="button" style={{ padding: "8px" }}>
           ویرایش
         </button>
@@ -58,7 +58,7 @@ export default function Profile() {
           <label className="label">تکرار رمز عبور</label>
         </div>
       </div>
-      <div className="buttons">
+      <div className="buttons-profile">
         <button className="button" style={{ padding: "8px" }}>
           ویرایش
         </button>
