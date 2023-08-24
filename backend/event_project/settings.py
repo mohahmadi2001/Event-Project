@@ -64,6 +64,18 @@ REST_FRAMEWORK = {
 }
 
 
+    'LOGIN_FIELD': 'email',
+    'USER_CREATE_PASSWORD_RETYPE': True,
+    'SET_PASSWORD_RETYPE': True,
+    'PASSWORD_CHANGE_URL': 'password/change/',
+    'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/',
+    'SERIALIZERS': {
+        'user_create': 'accounts.serializers.CustomRegistrationSerializer',
+        'user_update': 'accounts.serializers.UserUpdateSerializer',
+        'set_password': 'djoser.serializers.SetPasswordSerializer',
+    },
+    
+}
 
 
 MIDDLEWARE = [

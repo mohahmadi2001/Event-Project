@@ -1,12 +1,11 @@
 from django.urls import path
-from .views import (UserRegistrationView,
-                    UserLoginView,
-                    UserLogoutView,
-                    UserProfileView,
-                    UserProfileUpdateView,
-                    ChangePasswordView,
+from .views import (
+                    UserRegistrationView,
+                    UserUpdateView,
+                    CustomSetPasswordView
                 )
 from workshops.views import RegisteredEventListView
+
 
 app_name = 'accounts'
 urlpatterns = [
@@ -17,4 +16,5 @@ urlpatterns = [
     path('profile/update/', UserProfileUpdateView.as_view(), name='user-profile-update'),
     path('profile/change-password/', ChangePasswordView.as_view(), name='change-password'),
     path('profile/registered-events/', RegisteredEventListView.as_view(), name='user-registered-events'),
+    path('user/password_change/', CustomSetPasswordView.as_view(), name='password-change'),
 ]
