@@ -1,0 +1,8 @@
+Django==4.2.4
+pillow==9.5.0
+djangorestframework==3.14.0
+markdown
+django-filter
+drf-spectacular==0.26.1
+django-cors-headers==3.13.0
+djangorestframework_simplejwt
