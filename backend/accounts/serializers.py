@@ -1,11 +1,12 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from django.contrib.auth.hashers import make_password
-from workshops.models import Event
+from djoser.serializers import UserCreateSerializer,UserSerializer
+
 
 User = get_user_model()
 
-class UserRegistrationSerializer(serializers.ModelSerializer):
+    
+class CustomRegistrationSerializer(UserCreateSerializer):
     password = serializers.CharField(write_only=True)
     confirm_password = serializers.CharField(write_only=True)
     class Meta:
@@ -30,32 +31,25 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     
     
     def create(self, validated_data):
-        validated_data.pop('confirm_password') 
-        validated_data['password'] = make_password(validated_data.get('password'))
-        return super().create(validated_data)
+        user = User.objects.create(
+            email=validated_data['email'],
+            first_name=validated_data['first_name'],
+            last_name=validated_data['last_name']
+        )
 
-
-class UserLoginSerializer(serializers.Serializer):
-    email = serializers.EmailField()
-    password = serializers.CharField()
-
-    class Meta:
-        fields = ('email', 'password')
-
-
-class UserProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'first_name', 'last_name', 'email', 'mobile', 'is_student', 'student_number']
+        user.set_password(validated_data['password'])
+        user.save()
         
-
-class UserUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['first_name', 'last_name', 'email', 'mobile', 'student_number']
+        return user
     
 
-class ChangePasswordSerializer(serializers.Serializer):
-    old_password = serializers.CharField(required=True)
-    new_password = serializers.CharField(required=True)
-    
+
+class UserUpdateSerializer(UserSerializer):
+    class Meta(UserSerializer.Meta):
+        fields = (
+            'first_name', 
+            'last_name', 
+            'mobile',
+            'student_number',
+        )
+        
