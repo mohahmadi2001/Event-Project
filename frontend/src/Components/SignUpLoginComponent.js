@@ -126,11 +126,6 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
       .then((response) => response.json())
       .then((data) => {
         console.log("Server response:", data);
-        if (data.message)
-          toast.success("ثبت‌نام با موفقیت انجام شد", {
-            position: toast.POSITION.TOP_CENTER,
-            autoClose: 2000, // Auto close after 2 seconds
-          });
       })
       .catch((error) => {
         console.error("Fetch error:", error);
