@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView,UpdateAPIView
 from rest_framework import status
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
@@ -52,20 +52,20 @@ class UserRegistrationView(CreateAPIView):
         )
 
 
-class UserUpdateView(APIView):
+class UserUpdateView(UpdateAPIView):
     serializer_class = UserUpdateSerializer
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
         return self.request.user
 
-    def put(self, request, *args, **kwargs):
+    def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        serializer = self.serializer_class(instance, data=request.data, partial=partial)
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        self.perform_update(serializer)
+        return Response(serializer.data)
     
 
 class CustomSetPasswordView(APIView):
