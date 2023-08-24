@@ -1,10 +1,22 @@
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from workshops.models import Event
 
 User = get_user_model()
 
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    
+    @classmethod
+    def get_token(cls, user):
+        token = super(MyTokenObtainPairSerializer, cls).get_token(user)
+
+        # Add custom claims
+        token['email'] = user.email
+        return token
+    
+    
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     confirm_password = serializers.CharField(write_only=True)
@@ -30,18 +42,17 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     
     
     def create(self, validated_data):
-        validated_data.pop('confirm_password') 
-        validated_data['password'] = make_password(validated_data.get('password'))
-        return super().create(validated_data)
+        user = User.objects.create(
+            email=validated_data['email'],
+            first_name=validated_data['first_name'],
+            last_name=validated_data['last_name']
+        )
 
-
-class UserLoginSerializer(serializers.Serializer):
-    email = serializers.EmailField()
-    password = serializers.CharField()
-
-    class Meta:
-        fields = ('email', 'password')
-
+        user.set_password(validated_data['password'])
+        user.save()
+        
+        return user
+    
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
