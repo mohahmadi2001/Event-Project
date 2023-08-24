@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { Modal, Button } from "antd";
 import { ModalAntd } from "./ModalAntd";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function SignUpLoginComponent() {

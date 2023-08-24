@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ModalAntd } from "../../Components/ModalAntd";
 import { Modal } from "antd";
 import { Paginate } from "../../Components/Paginate";
@@ -42,18 +42,28 @@ export default function EventsContainer() {
   };
 
   //Fetching data from an API
-  useEffect(() => {
-    fetch("https://restcountries.com/v3.1/all")
-      .then((response) => {
-        if (!response.ok) throw new Error("Network response was not ok");
-        return response.json();
-      })
-      .then((data) => {
-        setEventsData(data); // Store the fetched data in state
-      })
-      .catch((error) => console.error("Error:", error));
-  }, []);
+  // useEffect(() => {
+  //   fetch("https://restcountries.com/v3.1/all")
+  //     .then((response) => {
+  //       if (!response.ok) throw new Error("Network response was not ok");
+  //       return response.json();
+  //     })
+  //     .then((data) => {
+  //       setEventsData(data); // Store the fetched data in state
+  //     })
+  //     .catch((error) => console.error("Error:", error));
+  // }, []);
   // console.log(eventsData);
+
+  fetch("http://127.0.0.1:8000/events/")
+    .then((response) => {
+      if (!response.ok) throw new Error("Network response was not ok");
+      return response.json();
+    })
+    .then((data) => {
+      setEventsData(data); // Store the fetched data in state
+    })
+    .catch((error) => console.error("Error:", error));
 
   return (
     <div className="events-container">
@@ -70,10 +80,10 @@ export default function EventsContainer() {
                 style={{ margin: "10px", fontSize: "25px", cursor: "pointer" }}
                 onClick={() => showModal(element)}
               >
-                {element.name.common}
+                {element.title}
               </h3>
               <img
-                src={element.flags.png}
+                src={element.image}
                 alt="flag"
                 style={{ width: "100%", cursor: "pointer" }}
                 onClick={() => showModal(element)}
