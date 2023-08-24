@@ -1,23 +1,12 @@
 from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import get_user_model
-from django.contrib.auth.hashers import make_password
-from workshops.models import Event
+from djoser.serializers import UserCreateSerializer,UserSerializer
+
 
 User = get_user_model()
 
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     
-    @classmethod
-    def get_token(cls, user):
-        token = super(MyTokenObtainPairSerializer, cls).get_token(user)
-
-        # Add custom claims
-        token['email'] = user.email
-        return token
-    
-    
-class UserRegistrationSerializer(serializers.ModelSerializer):
+class CustomRegistrationSerializer(UserCreateSerializer):
     password = serializers.CharField(write_only=True)
     confirm_password = serializers.CharField(write_only=True)
     class Meta:
@@ -54,19 +43,13 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return user
     
 
-class UserProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'first_name', 'last_name', 'email', 'mobile', 'is_student', 'student_number']
+
+class UserUpdateSerializer(UserSerializer):
+    class Meta(UserSerializer.Meta):
+        fields = (
+            'first_name', 
+            'last_name', 
+            'mobile',
+            'student_number',
+        )
         
-
-class UserUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['first_name', 'last_name', 'email', 'mobile', 'student_number']
-    
-
-class ChangePasswordSerializer(serializers.Serializer):
-    old_password = serializers.CharField(required=True)
-    new_password = serializers.CharField(required=True)
-    
