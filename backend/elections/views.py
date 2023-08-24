@@ -1,9 +1,15 @@
 from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from elections.models import Election,Candidate,Vote
-from .serializers import CandidateRegistrationSerializer,ElectionVoteSerializer,ElectionResultsSerializer
+from .serializers import  (
+                           CandidateRegistrationSerializer,
+                           ElectionVoteSerializer,
+                           ElectionResultsSerializer,
+                           ApprovedCandidateSerializer
+                        )
 from accounts.permissions import IsStudent
 from django.utils import timezone
 
@@ -55,7 +61,6 @@ class ElectionVoteView(APIView):
         if not election.is_active_election():
             return Response({"error": "Election is not currently active."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # remaining_election_time = election.get_remaining_election_time(election)
         
         serializer = ElectionVoteSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -77,7 +82,6 @@ class ElectionVoteView(APIView):
         return Response(
                     {
                         "message": "Votes submitted successfully.",
-                        # "remaining_election_time": remaining_election_time 
                     },
                     status=status.HTTP_201_CREATED
                 )
@@ -91,13 +95,22 @@ class ElectionResultsView(APIView):
             return Response({"error": "Election not found."}, status=status.HTTP_404_NOT_FOUND)
 
         candidates_with_votes = election.get_candidates_with_votes_ordered_by_votes()
-        total_participants = election.election_votes.count()
+        total_participants = Vote.get_votes_count_for_election(election)
         total_candidates = election.election_candidates.filter(is_approved=True).count()
 
-        data = {
+        serializer = ElectionResultsSerializer(data={
             "candidates_with_votes": candidates_with_votes,
             "total_participants": total_participants,
             "total_candidates": total_candidates
-        }
+        })
+        
+        serializer.is_valid()
 
-        return Response(data, status=status.HTTP_200_OK)
+
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+
+class ApprovedCandidateListView(ListAPIView):
+    serializer_class = ApprovedCandidateSerializer
+
+    def get_queryset(self):
+        return Candidate.get_approved_candidates()
