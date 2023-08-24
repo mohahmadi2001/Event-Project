@@ -105,9 +105,12 @@ class ElectionResultsView(APIView):
 
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
+
 class ApprovedCandidateListView(ListAPIView):
     serializer_class = ApprovedCandidateSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Candidate.get_approved_candidates()
+    
+
