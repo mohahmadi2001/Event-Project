@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from djoser.serializers import UserCreateSerializer,UserSerializer
+from djoser.serializers import UserCreateSerializer,UserSerializer,SetPasswordSerializer
 
 
 User = get_user_model()
@@ -53,3 +53,15 @@ class UserUpdateSerializer(UserSerializer):
             'student_number',
         )
         
+        
+class CustomSetPasswordSerializer(SetPasswordSerializer):
+    new_password = serializers.CharField(write_only=True, required=True, validators=[...]) 
+
+    def validate(self, attrs):
+        new_password = attrs.get('new_password')
+        re_new_password = attrs.get('re_new_password')
+
+        if new_password != re_new_password:
+            raise serializers.ValidationError({"re_new_password": "Passwords do not match."})
+
+        return attrs
