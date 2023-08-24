@@ -25,14 +25,20 @@ from drf_spectacular.views import (
 )
 
 urlpatterns = [
+    
+    # djoser
+    re_path(r"^auth/", include("accounts.urls")),
+    re_path(r"^auth/", include("djoser.urls.authtoken")),
+    
+    #apps
+    path('admin/', admin.site.urls),
+    path('events/',include('workshops.urls')),
+    path('elections/',include('elections.urls')),   
+    
+    # swagger
     path("schema/", SpectacularAPIView.as_view(api_version="v1"), name="schema"),
     path("swagger/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
     path("redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
-    
-    path('admin/', admin.site.urls),
-    path('events/',include('workshops.urls')),
-    path('accounts/',include('accounts.urls')),
-    path('elections/',include('elections.urls')),   
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
