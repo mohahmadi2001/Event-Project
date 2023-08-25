@@ -50,11 +50,12 @@ class User(AbstractBaseUser,PermissionsMixin):
         _("staff status"),
         default=False,
     )
-    event = models.ManyToManyField("workshops.Event",
-                                   verbose_name=_("event"),
-                                   blank=True,
-                                   related_name="participants"
-                                )
+    events = models.ManyToManyField(
+        "workshops.Event",
+        verbose_name=_("Events"),
+        blank=True,
+        related_name="participants",
+    )
     
     objects = UserManager()
 
@@ -78,7 +79,7 @@ class User(AbstractBaseUser,PermissionsMixin):
         return full_name.strip()
 
     def add_registered_event(self, event):
-        self.event.add(event)
+        self.events.add(event)
 
 
 

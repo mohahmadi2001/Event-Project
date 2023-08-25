@@ -1,10 +1,12 @@
 from django.db import models
 from core.models import SoftDeleteModel
 from django.utils.translation import gettext as _
+from django.utils import timezone
 # Create your models here.
 
 class Event(SoftDeleteModel):
     title = models.CharField(_("Title"), max_length=50)
+    slug = models.SlugField(_("slug"),default="-")
     description = models.TextField(_("description"))
     location = models.TextField(_("location"))
     capacity = models.PositiveIntegerField(_("Capacity"), default=0) 
@@ -21,41 +23,43 @@ class Event(SoftDeleteModel):
         return self.title
     
 # Create
-def create_event(title, description, location, capacity, price, image, start_event_at, end_event_at):
-    event = Event(
-        title=title,
-        description=description,
-        location=location,
-        capacity=capacity,
-        price=price,
-        image=image,
-        start_event_at=start_event_at,
-        end_event_at=end_event_at
-    )
-    event.save()
-    return event
-
-
-# Read
-def get_event(event_id):
-    try:
-        event = Event.objects.get(pk=event_id)
-        return event
-    except Event.DoesNotExist:
-        return None
-
-def get_all_events():
-    events = Event.objects.all()
-    return events
-
-
-# Update
-def update_event(event_id, **kwargs):
-    try:
-        event = Event.objects.get(pk=event_id)
-        for key, value in kwargs.items():
-            setattr(event, key, value)
+    def create_event(title, description, location, capacity, price, image, start_event_at, end_event_at):
+        event = Event(
+            title=title,
+            description=description,
+            location=location,
+            capacity=capacity,
+            price=price,
+            image=image,
+            start_event_at=start_event_at,
+            end_event_at=end_event_at
+        )
         event.save()
         return event
-    except Event.DoesNotExist:
-        return None
+
+
+    # Read
+    def get_event(event_id):
+        try:
+            event = Event.objects.get(pk=event_id)
+            return event
+        except Event.DoesNotExist:
+            return None
+
+    def get_all_events():
+        events = Event.objects.all()
+        return events
+
+
+    # Update
+    def update_event(event_id, **kwargs):
+        try:
+            event = Event.objects.get(pk=event_id)
+            for key, value in kwargs.items():
+                setattr(event, key, value)
+            event.save()
+            return event
+        except Event.DoesNotExist:
+            return None
+     
+        
