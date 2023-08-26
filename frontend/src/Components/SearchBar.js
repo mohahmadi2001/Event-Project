@@ -11,17 +11,19 @@ export default function SearchBar() {
   };
 
   return (
-    <Form onSubmit={handleSearch} className="d-flex">
-      <FormControl
-        type="text"
-        placeholder="جستجو کنید"
-        className="mr-2 search-input"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
-      <Button type="submit" variant="outline-primary" className="btn-search">
-        جستجو
-      </Button>
-    </Form>
+    <>
+      <Form onSubmit={handleSearch} className="d-flex">
+        <FormControl
+          type="text"
+          placeholder="جستجو کنید"
+          className="mr-2 search-input"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <Button type="submit" variant="outline-primary" className="btn-search">
+          جستجو
+        </Button>
+      </Form>
+    </>
   );
 }

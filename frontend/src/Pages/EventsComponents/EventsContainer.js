@@ -2,27 +2,10 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { ModalAntd } from "../../Components/ModalAntd";
 import { Modal } from "antd";
-import { Paginate } from "../../Components/Paginate";
 import "./Events.css";
 
 export default function EventsContainer() {
-  // Scroll to the top of the page
-  const scrollToTop = () => {
-    window.scrollTo(0, 0);
-  };
-
   const [eventsData, setEventsData] = useState([]);
-
-  //Implementing pagination
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 20;
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const displayedData = eventsData.slice(startIndex, endIndex);
-  function handlePageChange(newPage) {
-    setCurrentPage(newPage);
-    scrollToTop();
-  }
 
   //Implementing antd modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -41,21 +24,7 @@ export default function EventsContainer() {
     setIsModalOpen(false);
   };
 
-  //Fetching data from an API
-  // useEffect(() => {
-  //   fetch("https://restcountries.com/v3.1/all")
-  //     .then((response) => {
-  //       if (!response.ok) throw new Error("Network response was not ok");
-  //       return response.json();
-  //     })
-  //     .then((data) => {
-  //       setEventsData(data); // Store the fetched data in state
-  //     })
-  //     .catch((error) => console.error("Error:", error));
-  // }, []);
-  // console.log(eventsData);
-
-  fetch("http://127.0.0.1:8000/events/")
+  fetch("http://localhost:8000/events/")
     .then((response) => {
       if (!response.ok) throw new Error("Network response was not ok");
       return response.json();
@@ -73,7 +42,7 @@ export default function EventsContainer() {
         </Link>
       </h2>
       <div className="events-sp">
-        {displayedData.map((element, i) => (
+        {eventsData.map((element, i) => (
           <>
             <div className="event-sp" key={i}>
               <h3
@@ -82,22 +51,16 @@ export default function EventsContainer() {
               >
                 {element.title}
               </h3>
-              <img
+              {/* <img
                 src={element.image}
-                alt="flag"
+                alt="event-img"
                 style={{ width: "100%", cursor: "pointer" }}
                 onClick={() => showModal(element)}
-              />
+              /> */}
             </div>
           </>
         ))}
       </div>
-      <Paginate
-        totalItems={eventsData.length}
-        itemsPerPage={20}
-        currentPage={currentPage}
-        handlePageChange={handlePageChange}
-      />
       <ModalAntd>
         <Modal
           title={
