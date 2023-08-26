@@ -11,6 +11,6 @@ app_name = 'accounts'
 urlpatterns = [
     path('user/register/', UserRegistrationView.as_view(), name='user-registration'),
     path('user/update/', UserUpdateView.as_view(), name='user-profile-update'),
-    path('profile/registered-events/', RegisteredEventListView.as_view(), name='user-registered-events'),
+    path('user/registered-events/', RegisteredEventListView.as_view(), name='user-registered-events'),
     path('user/password_change/', CustomSetPasswordView.as_view(), name='password-change'),
 ]

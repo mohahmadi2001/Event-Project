@@ -2,7 +2,6 @@ from django.utils import timezone
 from django.db import models
 from core.models import SoftDeleteModel
 from django.utils.translation import gettext as _
-from django.utils.text import slugify
 
 # Create your models here.
 

@@ -43,7 +43,6 @@ class CustomRegistrationSerializer(UserCreateSerializer):
         return user
     
 
-
 class UserUpdateSerializer(UserSerializer):
     class Meta(UserSerializer.Meta):
         fields = (
