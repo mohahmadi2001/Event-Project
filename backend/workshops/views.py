@@ -6,10 +6,11 @@ from rest_framework.response import Response
 from rest_framework import status
 from workshops.models import Event
 from workshops.serializers import EventSerializer,EventRegistrationSerializer,RegisteredEventSerializer
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,AllowAny
 # Create your views here.
 
 class EventListView(APIView):
+    permission_classes = [AllowAny]
     def get(self, request):
         events = Event.objects.all()
         serializer = EventSerializer(events, many=True)
