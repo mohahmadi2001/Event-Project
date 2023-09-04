@@ -69,7 +69,7 @@
   color: var(--main-navy-blue);
   text-align: right;
   margin-right: 100px;
-  margin-top: 20px;
+  /* margin-top: 20px; */
   margin-bottom: 15px;
 }
 

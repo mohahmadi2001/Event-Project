@@ -1,4 +1,3 @@
-// import { useState } from "react";
 import CarouselComponent from "./CarouselComponent";
 import Events from "./Events.js";
 import "./HomePage.css";

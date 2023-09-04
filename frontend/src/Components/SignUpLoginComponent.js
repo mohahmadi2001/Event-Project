@@ -3,10 +3,13 @@ import { useState } from "react";
 import { Modal, Button } from "antd";
 import { ModalAntd } from "./ModalAntd";
 import { ToastContainer, toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "./AuthContext";
 
 export default function SignUpLoginComponent() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { isLoggedIn, setIsLoggedIn } = useAuth();
 
   function showModal() {
     setIsModalOpen(true);
@@ -15,12 +18,30 @@ export default function SignUpLoginComponent() {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+
+  //Handle logout and re-directing to home page after logging out
+  const history = useNavigate();
+
+  function handleLogout() {
+    setIsLoggedIn(false);
+    localStorage.removeItem("authToken");
+    history("/");
+    window.scrollTo(0, 0);
+  }
+
   return (
     <>
       <div>
-        <button className="signup-login-button" onClick={showModal}>
-          ورود | ثبت‌نام
-        </button>
+        {isLoggedIn ? (
+          <button className="signup-login-logout-button" onClick={handleLogout}>
+            <img src="/logout.png" alt="logout-icon" className="logout-icon" />
+            خروج
+          </button>
+        ) : (
+          <button className="signup-login-logout-button" onClick={showModal}>
+            ورود | ثبت‌نام
+          </button>
+        )}
       </div>
       <SignUpLoginForms
         isOpen={isModalOpen}
@@ -32,6 +53,8 @@ export default function SignUpLoginComponent() {
 }
 
 function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
+  const { isLoggedIn, setIsLoggedIn } = useAuth();
+
   //Check wether the user is student or not
   const [isChecked, setIsChecked] = useState(false);
 
@@ -142,7 +165,7 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
     setFormDataLogin(newFormDataLogin);
   }
 
-  const urlLogin = "http://127.0.0.1:8000/accounts/user-login/";
+  const urlLogin = "http://localhost:8000/auth/token/login/";
   function handleLogin() {
     console.log("Data to be send:", formDataLogin);
     fetch(urlLogin, {
@@ -155,6 +178,33 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
       .then((response) => response.json())
       .then((data) => {
         console.log("Server response:", data);
+        if (data.auth_token) {
+          toast.success("ورود با موفقیت انجام شد", {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 2000, // Auto close after 2 seconds
+          });
+          setIsLoggedIn(true);
+          localStorage.setItem("authToken", data.auth_token);
+        } else {
+          if (data.email) {
+            toast.error("ایمیل نمی‌تواند خالی باشد", {
+              position: toast.POSITION.TOP_RIGHT,
+              autoClose: 5000, // Auto close after 5 seconds
+            });
+          }
+          if (data.password) {
+            toast.error("رمز عبور نمی‌تواند خالی باشد", {
+              position: toast.POSITION.TOP_RIGHT,
+              autoClose: 5000, // Auto close after 5 seconds
+            });
+          }
+          if (data.non_field_errors) {
+            toast.error("کاربری با این مشخصات یافت نشد", {
+              position: toast.POSITION.TOP_RIGHT,
+              autoClose: 5000, // Auto close after 5 seconds
+            });
+          }
+        }
       })
       .catch((error) => {
         console.error("Fetch error:", error);
@@ -190,6 +240,15 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
       password: "",
     });
   };
+
+  //Pressing the Enter key for logging-in or registering
+  function handleKeyPress(e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      showSignUp ? handleRegister() : handleLogin();
+      setIsModalOpen(false);
+    }
+  }
 
   return (
     <>
@@ -227,7 +286,7 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
                 ثبت‌نام
               </button>
             </div>
-            <div className="form-wrapper">
+            <div className="form-wrapper" onKeyDown={handleKeyPress}>
               {showSignUp ? (
                 <>
                   <div className="signup-form">

@@ -2,11 +2,14 @@ import React, { useState, useEffect } from "react";
 import logo from "./sciconnect.png";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
+import { useAuth } from "./AuthContext";
 import SearchBar from "./SearchBar";
 import SignUpLoginComponent from "./SignUpLoginComponent";
 import { Link } from "react-router-dom";
 
 export default function NavigationBar() {
+  const { isLoggedIn } = useAuth();
+
   //Implementing Sticky Nav Bar
   const [isSticky, setIsSticky] = useState(false);
   function handleSticky() {
@@ -76,9 +79,13 @@ export default function NavigationBar() {
           </Nav.Link>
         </Nav>
       </Navbar.Collapse>
-      <a href="/profile">
-        <img src="/profile.png" alt="profile-icon" className="profile-icon" />
-      </a>
+
+      {isLoggedIn && (
+        <Nav.Link as={Link} to="/profile">
+          <img src="/profile.png" alt="profile-icon" className="profile-icon" />
+        </Nav.Link>
+      )}
+
       <SignUpLoginComponent />
     </Navbar>
   );

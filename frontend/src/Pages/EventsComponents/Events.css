@@ -27,30 +27,42 @@
   row-gap: 40px;
   justify-items: center;
   align-items: center;
-  margin-bottom: 100px;
   margin-left: 60px;
   margin-right: 60px;
+  margin-bottom: 60px;
+  direction: rtl;
 }
 
 .event-sp {
   background-color: whitesmoke;
   width: 280px;
-  height: 380px;
+  height: 480px;
   border-radius: 20px;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 0px 8px 0px;
 }
 
-/* Pagination styles */
-.active > .page-link {
-  color: #fff;
-  background-color: var(--main-navy-blue);
-  border-color: var(--main-navy-blue);
+.event-sp-title {
+  margin: 20px;
+  font-size: 20px;
+  cursor: pointer;
+  direction: rtl;
+  color: var(--main-navy-blue);
 }
 
-.pagination {
-  --bs-pagination-color: #444444;
-  --bs-pagination-hover-color: var(--main-orange);
-  --bs-pagination-focus-color: var(--main-orange);
+.OPENDAY {
+  font-size: 17.2px;
+}
+
+.event-sp-img {
+  width: 100%;
+  height: 250px;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+.event-detail {
+  margin-right: 30px;
+  font-size: 14px;
 }
 
 /* Modal */
@@ -67,4 +79,8 @@
 .ant-btn-primary:not(:disabled):not(.ant-btn-disabled):hover {
   color: #fff;
   background-color: #1fa040;
+}
+
+.modal-container {
+  direction: rtl;
 }
