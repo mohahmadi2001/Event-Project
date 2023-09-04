@@ -41,17 +41,23 @@ class EventRegistrationView(ListCreateAPIView):
 
         if event.capacity <= 0:
             return Response({"error": "Event capacity is full."}, status=status.HTTP_400_BAD_REQUEST)
-
-        if event.participants.filter(id=user.id).exists():
+        
+        event_registration = request.session.get("event_registration", {})
+        
+        if event_id in event_registration:
             return Response({"error": "User has already registered for this event."}, status=status.HTTP_400_BAD_REQUEST)
-
+        
         event.capacity -= 1
         event.participants.add(user)
         event.save()
 
         user.add_registered_event(event)
-        return Response({"message": "Event registration successful."}, status=status.HTTP_200_OK)
 
+        event_registration[event_id] = True
+        request.session["event_registration"] = event_registration
+        request.session.modified = True
+
+        return Response({"message": "Event registration successful."}, status=status.HTTP_200_OK)
 
 
     def get_error_link(self):

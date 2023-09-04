@@ -11,11 +11,14 @@ from .serializers import  (
                            ApprovedCandidateSerializer
                         )
 from accounts.permissions import IsStudent
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny
+
 
 
 class CandidateRegistrationView(CreateAPIView):
     serializer_class = CandidateRegistrationSerializer
+    permission_classes = [AllowAny]
+
 
     def get_election(self):
         election_id = self.request.data.get('election')
@@ -49,48 +52,45 @@ class CandidateRegistrationView(CreateAPIView):
            
    
 
-class ElectionVoteView(ListCreateAPIView):
-    permission_classes = [IsAuthenticated]
-    serializer_class = ElectionVoteSerializer
+class ElectionVoteView(APIView):
+    permission_classes = [AllowAny]
 
-    def get_queryset(self):
-        election_slug = self.kwargs['election_slug']
+    def post(self, request, election_slug):
         try:
             election = Election.objects.get(slug=election_slug)
         except Election.DoesNotExist:
-            return Candidate.objects.none()
-        
-        if not election.is_active_election():
-            return Candidate.objects.none()
-        
-        return Candidate.objects.filter(election=election, is_approved=True)
+            return Response({"error": "Election not found."}, status=status.HTTP_404_NOT_FOUND)
 
-    def perform_create(self, serializer):
-        user = self.request.user
+        if not election.is_active_election():
+            return Response({"error": "Election is not active."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = request.user
         
         if user.has_voted:
             return Response({"error": "You have already voted."}, status=status.HTTP_400_BAD_REQUEST)
 
-        candidates_data = serializer.validated_data['candidates']
-        if len(candidates_data) > 5:
-            return Response({"error": "You can vote for up to 5 candidates."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        for candidate_data in candidates_data:
-            candidate_id = candidate_data['candidate_id']
-            candidate = Candidate.objects.get(pk=candidate_id)
+        serializer = ElectionVoteSerializer(data=request.data)
+        if serializer.is_valid():
+            candidates_data = serializer.validated_data['candidates']
+            if len(candidates_data) > 5:
+                return Response({"error": "You can vote for up to 5 candidates."}, status=status.HTTP_400_BAD_REQUEST)
             
-            Vote.objects.create(user=user, candidate=candidate)
+            for candidate_data in candidates_data:
+                candidate_id = candidate_data['candidate_id']
+                try:
+                    candidate = Candidate.objects.get(pk=candidate_id, election=election, is_approved=True)
+                except Candidate.DoesNotExist:
+                    return Response({"error": "Invalid candidate ID."}, status=status.HTTP_400_BAD_REQUEST)
+                
+                Vote.objects.create(user=user, election=election, candidate=candidate)
 
-        user.has_voted = True
-        user.save()
+            user.has_voted = True
+            user.save()
 
-    def get_response(self):
-        return Response(
-            {
-                "message": "Votes submitted successfully.",
-            },
-            status=status.HTTP_201_CREATED
-        )
+            return Response({"message": "Votes submitted successfully."}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     
 
 class ElectionResultsView(APIView):
@@ -118,7 +118,7 @@ class ElectionResultsView(APIView):
 
 class ApprovedCandidateListView(ListAPIView):
     serializer_class = ApprovedCandidateSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         return Candidate.get_approved_candidates()
