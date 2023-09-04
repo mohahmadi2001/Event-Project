@@ -42,7 +42,7 @@ class User(AbstractBaseUser,PermissionsMixin):
     last_name = models.CharField(_("last name"), max_length=150, blank=True)
     email = models.EmailField(_("email address"), unique=True)
     mobile = models.CharField(_("mobile number"), max_length=11, unique=True, blank=True, null=True)
-    is_student = models.BooleanField(_("student status"),default=True)
+    is_student = models.BooleanField(_("student status"),default=False)
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
     student_number = models.CharField(_("student number"), max_length=50, blank=True,null=True)
     has_voted = models.BooleanField(_("has voted"), default=False)
