@@ -18,7 +18,7 @@ class EventListView(APIView):
 
 
 class EventRegistrationView(ListCreateAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     serializer_class = EventRegistrationSerializer
     queryset = Event.objects.all()  
 

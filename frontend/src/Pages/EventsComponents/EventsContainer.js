@@ -23,6 +23,7 @@ export default function EventsContainer() {
     const authToken = localStorage.getItem("authToken");
     if (authToken === null) alert("ابتدا وارد سایت شوید");
     console.log(authToken);
+    console.log(JSON.stringify({ id: selected?.id }));
     const headers = {
       "Content-Type": "application/json",
     };
@@ -36,7 +37,7 @@ export default function EventsContainer() {
     fetch(urlEventRegister, {
       method: "POST",
       headers: headers,
-      body: JSON.stringify(selected?.id),
+      body: JSON.stringify({ id: selected?.id }),
     })
       .then((response) => response.json())
       .then((data) => console.log("Server response:", data))
