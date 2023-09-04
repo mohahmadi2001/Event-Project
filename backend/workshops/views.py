@@ -53,6 +53,7 @@ class EventRegistrationView(ListCreateAPIView):
         return Response({"message": "Event registration successful."}, status=status.HTTP_200_OK)
 
 
+
     def get_error_link(self):
         return reverse('workshops:events-list')
     
