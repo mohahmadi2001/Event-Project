@@ -34,7 +34,9 @@ class CustomRegistrationSerializer(UserCreateSerializer):
         user = User.objects.create(
             email=validated_data['email'],
             first_name=validated_data['first_name'],
-            last_name=validated_data['last_name']
+            last_name=validated_data['last_name'],
+            is_student=validated_data['is_student'],
+            student_number=validated_data['student_number']
         )
 
         user.set_password(validated_data['password'])
