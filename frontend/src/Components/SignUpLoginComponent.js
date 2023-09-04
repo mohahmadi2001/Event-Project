@@ -81,7 +81,7 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
 
   const urlRegister = "http://localhost:8000/auth/user/register/";
   function handleRegister() {
-    // console.log("Data to be send:", formDataRegister);
+    console.log("Data to be send:", formDataRegister);
     fetch(urlRegister, {
       method: "POST",
       headers: {
