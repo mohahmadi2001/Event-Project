@@ -32,20 +32,20 @@ class EventRegistrationView(ListCreateAPIView):
         try:
             event = self.queryset.get(id=event_id)
         except Event.DoesNotExist:
-            return Response({"error": "Event not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"eventerror": "Event not found."}, status=status.HTTP_404_NOT_FOUND)
 
         current_date = date.today()
 
         if event.start_event_at.date() <= current_date:
-            return Response({"error": "Event has already started. Registration is closed."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"closeerror": "Event has already started. Registration is closed."}, status=status.HTTP_400_BAD_REQUEST)
 
         if event.capacity <= 0:
-            return Response({"error": "Event capacity is full."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"capacityerror": "Event capacity is full."}, status=status.HTTP_400_BAD_REQUEST)
         
         event_registration = request.session.get("event_registration", {})
         
         if event_id in event_registration:
-            return Response({"error": "User has already registered for this event."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"registerederror": "User has already registered for this event."}, status=status.HTTP_400_BAD_REQUEST)
         
         event.capacity -= 1
         event.participants.add(user)
