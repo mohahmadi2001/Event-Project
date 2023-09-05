@@ -64,9 +64,9 @@ class CandidateRegistrationView(CreateAPIView):
 class ElectionVoteView(APIView):
     permission_classes = [AllowAny]
 
-    def post(self, request, election_slug):
+    def post(self, request, election_id):
         try:
-            election = Election.objects.get(slug=election_slug)
+            election = Election.objects.get(id=election_id)
         except Election.DoesNotExist:
             return Response({"error": "Election not found."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -82,14 +82,14 @@ class ElectionVoteView(APIView):
         if serializer.is_valid():
             candidates_data = serializer.validated_data['candidates']
             if len(candidates_data) > 5:
-                return Response({"error": "You can vote for up to 5 candidates."}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"limitederror": "You can vote for up to 5 candidates."}, status=status.HTTP_400_BAD_REQUEST)
             
             for candidate_data in candidates_data:
                 candidate_id = candidate_data['candidate_id']
                 try:
                     candidate = Candidate.objects.get(pk=candidate_id, election=election, is_approved=True)
                 except Candidate.DoesNotExist:
-                    return Response({"error": "Invalid candidate ID."}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({"invaliderror": "Invalid candidate ID."}, status=status.HTTP_400_BAD_REQUEST)
                 
                 Vote.objects.create(user=user, election=election, candidate=candidate)
 

@@ -13,6 +13,6 @@ urlpatterns = [
     path('', ElectionListView.as_view(), name='election_list'),
     path('register-candidate/', CandidateRegistrationView.as_view(), name='candidate-registration'),
     path('approved-candidates/', ApprovedCandidateListView.as_view(), name='approved-candidates-list'),
-    path('<slug:election_slug>/vote/', ElectionVoteView.as_view(), name='election-vote'),
-    path('<slug:election_slug>/results/', ElectionResultsView.as_view(), name='election-participant-count'),
+    path('<int:election_id>/vote/', ElectionVoteView.as_view(), name='election-vote'),
+    path('<int:election_id>/results/', ElectionResultsView.as_view(), name='election-participant-count'),
 ]
