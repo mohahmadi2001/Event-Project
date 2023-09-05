@@ -4,6 +4,7 @@ import { ModalAntd } from "../../Components/ModalAntd";
 import { Modal, Button } from "antd";
 import jalaliMoment from "jalali-moment";
 import "./Events.css";
+import { toast } from "react-toastify";
 
 export default function EventsContainer() {
   const [eventsData, setEventsData] = useState([]);
@@ -21,9 +22,11 @@ export default function EventsContainer() {
   const urlEventRegister = "http://localhost:8000/events/register-event/";
   function handleRegisterEvent() {
     const authToken = localStorage.getItem("authToken");
-    if (authToken === null) alert("ابتدا وارد سایت شوید");
-    console.log(authToken);
-    console.log(JSON.stringify({ id: selected?.id }));
+    if (authToken === null) {
+      alert("ابتدا وارد سایت شوید");
+      return;
+    }
+    // console.log("auth", authToken);
     const headers = {
       "Content-Type": "application/json",
     };
@@ -32,15 +35,31 @@ export default function EventsContainer() {
       headers.Authorization = `Token ${authToken}`;
     }
 
-    console.log(headers);
-
     fetch(urlEventRegister, {
       method: "POST",
       headers: headers,
-      body: JSON.stringify({ id: selected?.id }),
+      body: JSON.stringify({
+        id: selected?.id,
+      }),
     })
-      .then((response) => response.json())
-      .then((data) => console.log("Server response:", data))
+      .then((response) => {
+        console.log("res:", response);
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Server response:", data);
+        if (data.message) {
+          toast.success("ثبت‌نام با موفقیت انجام شد", {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 2000, // Auto close after 2 seconds
+          });
+        } else {
+          toast.error("خطایی رخ داد", {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 5000, // Auto close after 5 seconds
+          });
+        }
+      })
       .catch((error) => console.log("Fetch error:", error));
   }
 
