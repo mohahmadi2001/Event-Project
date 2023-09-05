@@ -2,6 +2,13 @@ from django.utils import timezone
 from rest_framework import serializers
 from .models import Candidate, Election, Vote
 
+
+class ElectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Election
+        exclude = ("is_deleted",)
+
+
 class CandidateRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Candidate

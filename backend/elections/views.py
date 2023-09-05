@@ -8,11 +8,20 @@ from .serializers import  (
                            CandidateRegistrationSerializer,
                            ElectionVoteSerializer,
                            ElectionResultsSerializer,
-                           ApprovedCandidateSerializer
+                           ApprovedCandidateSerializer,
+                           ElectionSerializer
                         )
 from accounts.permissions import IsStudent
 from rest_framework.permissions import AllowAny
 
+
+
+class ElectionListView(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request):
+        election = Election.objects.all()
+        serializer = ElectionSerializer(election, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class CandidateRegistrationView(CreateAPIView):
