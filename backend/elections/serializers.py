@@ -42,7 +42,7 @@ class CandidateRegistrationSerializer(serializers.ModelSerializer):
 class ApprovedCandidateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Candidate
-        fields = ('id', 'first_name', 'last_name')
+        fields = ('id', 'first_name', 'last_name','entry_year')
 
 
 class VoteSerializer(serializers.Serializer):
