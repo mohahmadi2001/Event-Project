@@ -15,3 +15,11 @@
   justify-content: center;
   align-items: center;
 }
+
+.registered-events-wrapper {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  align-items: flex-start;
+  direction: rtl;
+  margin-right: 6rem;
+}

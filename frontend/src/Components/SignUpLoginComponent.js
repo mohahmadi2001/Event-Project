@@ -25,6 +25,7 @@ export default function SignUpLoginComponent() {
   function handleLogout() {
     setIsLoggedIn(false);
     localStorage.removeItem("authToken");
+    localStorage.removeItem("credentials");
     history("/");
     window.scrollTo(0, 0);
   }
@@ -57,6 +58,11 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
 
   //Check wether the user is student or not
   const [isChecked, setIsChecked] = useState(false);
+
+  //Handle Basic Authentication
+  function generateBase64Credentials(username, password) {
+    return btoa(`${username}:${password}`);
+  }
 
   //Send register form data to server-side
   const [formDataRegister, setFormDataRegister] = useState({
@@ -168,6 +174,8 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
   const urlLogin = "http://localhost:8000/auth/token/login/";
   function handleLogin() {
     console.log("Data to be send:", formDataLogin);
+    const { email, password } = formDataLogin;
+    const base64Credentials = generateBase64Credentials(email, password);
     fetch(urlLogin, {
       method: "POST",
       headers: {
@@ -185,6 +193,7 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
           });
           setIsLoggedIn(true);
           localStorage.setItem("authToken", data.auth_token);
+          localStorage.setItem("credentials", base64Credentials);
         } else {
           if (data.email) {
             toast.error("ایمیل نمی‌تواند خالی باشد", {

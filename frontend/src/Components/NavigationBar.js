@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+// import React, { useState, useEffect } from "react";
 import logo from "./sciconnect.png";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
@@ -11,25 +11,27 @@ export default function NavigationBar() {
   const { isLoggedIn } = useAuth();
 
   //Implementing Sticky Nav Bar
-  const [isSticky, setIsSticky] = useState(false);
-  function handleSticky() {
-    if (window.scrollY > 150) setIsSticky(true);
-    else setIsSticky(false);
-  }
+  // const [isSticky, setIsSticky] = useState(false);
+  // function handleSticky() {
+  //   if (window.scrollY > 150) setIsSticky(true);
+  //   else setIsSticky(false);
+  // }
 
-  useEffect(() => {
-    window.addEventListener("scroll", handleSticky);
-    return () => {
-      window.removeEventListener("scroll", handleSticky);
-    };
-  }, []);
+  // useEffect(() => {
+  //   window.addEventListener("scroll", handleSticky);
+  //   return () => {
+  //     window.removeEventListener("scroll", handleSticky);
+  //   };
+  // }, []);
   //Scroll to Top of the Pages
   const scrollToTop = () => {
     window.scrollTo(0, 0); // Scroll to the top of the page
   };
 
+  //${isSticky ? "sticky" : ""}
+
   return (
-    <Navbar expand="lg" className={`navbar ${isSticky ? "sticky" : ""}`}>
+    <Navbar expand="lg" className={`navbar`}>
       <Navbar.Brand href="#home" className="navbarBrand" onClick={scrollToTop}>
         <img src={logo} alt="sciconnect-logo" width={120} />
         SciConnect

@@ -2,6 +2,8 @@ import { useState } from "react";
 import "./Election.css";
 
 export default function RegisterCandidate() {
+  //Getting register candidate time
+
   //Send register candidate data to backend server
   const [regCanData, setRegCanData] = useState({
     first_name: "",

@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 
 export default function EventsContainer() {
   const [eventsData, setEventsData] = useState([]);
+  const [registeredEvents, setRegisteredEvents] = useState([]);
 
   //Implementing antd modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,21 +19,61 @@ export default function EventsContainer() {
     setIsModalOpen(true);
   }
 
+  //Get user's registered events
+  const urlRegisteredEvents =
+    "http://localhost:8000/auth/user/registered-events/";
+  useEffect(() => {
+    const base64Credentials = localStorage.getItem("credentials");
+    const headers = {
+      "Content-Type": "application/json",
+    };
+
+    if (base64Credentials) {
+      // headers.Authorization = `Token ${authToken}`;
+      headers.Authorization = `Basic ${base64Credentials}`;
+    }
+
+    fetch(urlRegisteredEvents, {
+      method: "GET",
+      headers: headers,
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error("Network response was not ok");
+        return response.json();
+      })
+      .then((data) => {
+        setRegisteredEvents(data);
+      })
+      .catch((error) => console.error("Error:", error));
+  }, []);
+
   //Sending request to backend server for users to register events
   const urlEventRegister = "http://localhost:8000/events/register-event/";
   function handleRegisterEvent() {
-    const authToken = localStorage.getItem("authToken");
-    if (authToken === null) {
+    // const authToken = localStorage.getItem("authToken");
+    const base64Credentials = localStorage.getItem("credentials");
+    if (base64Credentials === null) {
       alert("ابتدا وارد سایت شوید");
       return;
     }
+
+    if (registeredEvents.some((event) => event.slug === selected?.slug)) {
+      // Check if the event is already registered
+      toast.error("شما قبلا در این رویداد ثبت‌نام کرده‌اید", {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 5000, // Auto close after 5 seconds
+      });
+      return;
+    }
+
     // console.log("auth", authToken);
     const headers = {
       "Content-Type": "application/json",
     };
 
-    if (authToken) {
-      headers.Authorization = `Token ${authToken}`;
+    if (base64Credentials) {
+      // headers.Authorization = `Token ${authToken}`;
+      headers.Authorization = `Basic ${base64Credentials}`;
     }
 
     fetch(urlEventRegister, {
@@ -43,7 +84,6 @@ export default function EventsContainer() {
       }),
     })
       .then((response) => {
-        console.log("res:", response);
         return response.json();
       })
       .then((data) => {
@@ -51,10 +91,10 @@ export default function EventsContainer() {
         if (data.message) {
           toast.success("ثبت‌نام با موفقیت انجام شد", {
             position: toast.POSITION.TOP_RIGHT,
-            autoClose: 2000, // Auto close after 2 seconds
+            autoClose: 5000, // Auto close after 5 seconds
           });
-        } else {
-          toast.error("خطایی رخ داد", {
+        } else if (data.capacityerror) {
+          toast.error("ظرفیت رویداد تکمیل است", {
             position: toast.POSITION.TOP_RIGHT,
             autoClose: 5000, // Auto close after 5 seconds
           });
