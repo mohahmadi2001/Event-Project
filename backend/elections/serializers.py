@@ -45,12 +45,7 @@ class ApprovedCandidateSerializer(serializers.ModelSerializer):
         fields = ('id', 'first_name', 'last_name','entry_year')
 
 
-class VoteSerializer(serializers.Serializer):
-    candidate_id = serializers.PrimaryKeyRelatedField(queryset=Candidate.get_approved_candidates())
 
-
-class ElectionVoteSerializer(serializers.Serializer):
-    candidates = VoteSerializer(many=True)
     
     
 class CandidateWithVotesSerializer(serializers.Serializer):
@@ -66,9 +61,17 @@ class CandidateWithVotesSerializer(serializers.Serializer):
             "entry_year": candidate.entry_year
         }
 
-class ElectionResultsSerializer(serializers.Serializer):
-    candidates_with_votes = CandidateWithVotesSerializer(many=True)
-    total_participants = serializers.IntegerField()
-    total_candidates = serializers.IntegerField()
+class ElectionResultSerializer(serializers.Serializer):
+    candidate_id = serializers.IntegerField(source='candidate__id')
+    first_name = serializers.CharField(source='candidate__first_name')
+    last_name = serializers.CharField(source='candidate__last_name')
+    entry_year = serializers.IntegerField(source='candidate__entry_year')
+    votes_count = serializers.IntegerField()
 
     
+class VoteSerializer(serializers.Serializer):
+    election_id = serializers.IntegerField(write_only=True)
+    candidate_ids = serializers.ListField(
+        child=serializers.IntegerField(),
+        write_only=True
+    )
