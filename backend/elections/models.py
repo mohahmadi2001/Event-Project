@@ -53,6 +53,10 @@ class Election(SoftDeleteModel):
     candidate_registration_start = models.DateTimeField(_("Candidate Registration Start"))
     candidate_registration_end = models.DateTimeField(_("Candidate Registration End"))
     candidates = models.ManyToManyField("elections.Candidate", related_name="elections",blank=True)
+    max_votes_per_user = models.PositiveIntegerField(
+        _("Maximum Votes Per User"),
+        default=1,  
+    )
     
     def __str__(self):
         return self.title

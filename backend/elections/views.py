@@ -86,8 +86,9 @@ class VoteView(APIView):
 
             candidate_ids = serializer.validated_data.get('candidate_ids')
 
-            if len(candidate_ids) > 5:
-                return Response({"maxerror": "You can vote for a maximum of 5 candidates."}, status=status.HTTP_400_BAD_REQUEST)
+            if len(candidate_ids) > election.max_votes_per_user:
+                return Response({"maxerror": f"You can vote for a maximum of {election.max_votes_per_user} candidates."}, status=status.HTTP_400_BAD_REQUEST)
+
 
             for candidate_id in candidate_ids:
                 candidate = Candidate.objects.get(id=candidate_id)
