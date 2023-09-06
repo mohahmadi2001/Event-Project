@@ -103,24 +103,23 @@ class ElectionVoteView(APIView):
     
 
 class ElectionResultsView(APIView):
-    def get(self, request, election_slug):
-        try:
-            election = Election.objects.get(slug=election_slug)
-        except Election.DoesNotExist:
-            return Response({"error": "Election not found."}, status=status.HTTP_404_NOT_FOUND)
+    def get(self, request):
+        elections = Election.objects.all()
 
-        candidates_with_votes = election.get_candidates_with_votes_ordered_by_votes()
-        total_participants = Vote.get_votes_count_for_election(election)
-        total_candidates = election.election_candidates.filter(is_approved=True).count()
+        results = []
+        for election in elections:
+            candidates_with_votes = election.get_candidates_with_votes_ordered_by_votes()
+            total_participants = Vote.get_votes_count_for_election(election)
+            total_candidates = election.election_candidates.filter(is_approved=True).count()
 
-        serializer = ElectionResultsSerializer(data={
-            "candidates_with_votes": candidates_with_votes,
-            "total_participants": total_participants,
-            "total_candidates": total_candidates
-        })
-        
+            results.append({
+                "candidates_with_votes": candidates_with_votes,
+                "total_participants": total_participants,
+                "total_candidates": total_candidates
+            })
+
+        serializer = ElectionResultsSerializer(data=results, many=True)
         serializer.is_valid()
-
 
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
