@@ -75,19 +75,19 @@ class VoteView(APIView):
             try:
                 election = Election.objects.get(id=election_id)
             except Election.DoesNotExist:
-                return Response({"message": "Election does not exist."}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"existerror": "Election does not exist."}, status=status.HTTP_400_BAD_REQUEST)
 
             if not election.is_active_election():
-                return Response({"message": "This election is not active or has not started yet."}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"activeerror": "This election is not active or has not started yet."}, status=status.HTTP_400_BAD_REQUEST)
 
             existing_vote = Vote.objects.filter(user=user, election=election).first()
             if existing_vote:
-                return Response({"message": "You have already voted in this election."}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"votederror": "You have already voted in this election."}, status=status.HTTP_400_BAD_REQUEST)
 
             candidate_ids = serializer.validated_data.get('candidate_ids')
 
             if len(candidate_ids) > 5:
-                return Response({"message": "You can vote for a maximum of 5 candidates."}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"maxerror": "You can vote for a maximum of 5 candidates."}, status=status.HTTP_400_BAD_REQUEST)
 
             for candidate_id in candidate_ids:
                 candidate = Candidate.objects.get(id=candidate_id)
