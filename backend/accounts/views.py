@@ -10,8 +10,10 @@ from .serializers import (
                           CustomRegistrationSerializer,
                           UserUpdateSerializer,
                           CustomSetPasswordSerializer,
+                          StudentInfoSerializer
                         )
 from rest_framework.permissions import AllowAny
+from rest_framework import generics
 
 User = get_user_model()
 
@@ -84,3 +86,8 @@ class CustomSetPasswordView(APIView):
 
         return Response({"message": "Password changed successfully."}, status=status.HTTP_200_OK)
 
+
+class StudentInfoAPIView(generics.ListAPIView):
+    queryset = User.objects.filter(is_student=True)  
+    serializer_class = StudentInfoSerializer
+    permission_classes = [IsAuthenticated] 

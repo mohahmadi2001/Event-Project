@@ -63,7 +63,7 @@ class CandidateRegistrationView(CreateAPIView):
 
 
 class VoteView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsStudent]
 
     def post(self, request, *args, **kwargs):
         user = request.user
@@ -93,6 +93,9 @@ class VoteView(APIView):
                 candidate = Candidate.objects.get(id=candidate_id)
                 vote = Vote(user=user, candidate=candidate, election=election)
                 vote.save()
+            
+            user.has_voted = True
+            user.save()    
 
             return Response({"message": "Your votes have been cast successfully."}, status=status.HTTP_201_CREATED)
         else:
