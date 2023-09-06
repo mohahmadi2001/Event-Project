@@ -2,6 +2,7 @@ from django.utils import timezone
 from django.db import models
 from core.models import SoftDeleteModel
 from django.utils.translation import gettext as _
+from django.db.models import Count
 
 # Create your models here.
 
@@ -83,22 +84,7 @@ class Election(SoftDeleteModel):
         
         return f"{remaining_days} days, {remaining_hours} hours, {remaining_minutes} minutes, {remaining_seconds} seconds"
     
-    def get_candidates_with_votes_ordered_by_votes(self):
-        candidates_with_votes = []
-        for candidate in self.candidates.all():
-            votes_count = Vote.get_votes_count_for_candidate(candidate)
-            candidates_with_votes.append({
-                "candidate": {
-                    "id": candidate.id,
-                    "first_name": candidate.first_name,
-                    "last_name": candidate.last_name,
-                    "entry_year": candidate.entry_year,
-                },
-                "votes_count": votes_count
-            })
-
-        candidates_with_votes.sort(key=lambda x: x["votes_count"], reverse=True)
-        return candidates_with_votes
+    
     
        
 class Vote(SoftDeleteModel):
@@ -113,8 +99,8 @@ class Vote(SoftDeleteModel):
                                   null=True
                                 )
     
-    # class Meta:
-    #     unique_together = ('user', 'election')
+    def __str__(self):
+        return f"{self.candidate}"
         
     @classmethod
     def get_votes_count_for_candidate(cls, candidate):
@@ -123,5 +109,16 @@ class Vote(SoftDeleteModel):
     @classmethod
     def get_votes_count_for_election(cls, election):
         return Vote.objects.filter(election=election).count()
+    
+    
+    @classmethod
+    def get_candidates_with_votes_ordered_by_votes(cls, election):
+        candidates_with_votes = cls.objects.filter(election=election)
+        candidates_with_votes = candidates_with_votes.values('candidate__id', 'candidate__first_name', 'candidate__last_name', 'candidate__entry_year')
+        candidates_with_votes = candidates_with_votes.annotate(votes_count=Count('candidate'))
+        candidates_with_votes = candidates_with_votes.order_by('-votes_count')
+
+        return candidates_with_votes
+
     
    

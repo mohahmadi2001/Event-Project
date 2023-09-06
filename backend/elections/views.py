@@ -7,7 +7,7 @@ from elections.models import Election,Candidate,Vote
 from .serializers import  (
                            CandidateRegistrationSerializer,
                            VoteSerializer,
-                           ElectionResultsSerializer,
+                           ElectionResultSerializer,
                            ApprovedCandidateSerializer,
                            ElectionSerializer
                         )
@@ -107,26 +107,22 @@ class VoteView(APIView):
     
 
 class ElectionResultsView(APIView):
-    def get(self, request, election_slug):
-        try:
-            election = Election.objects.get(slug=election_slug)
-        except Election.DoesNotExist:
-            return Response({"error": "Election not found."}, status=status.HTTP_404_NOT_FOUND)
+    def get(self, request, *args, **kwargs):
+        # فقط یک انتخابات دارید، بنابراین می‌توانید آن را به صورت ثابت انتخاب کنید
+        election = Election.objects.first()
 
-        candidates_with_votes = election.get_candidates_with_votes_ordered_by_votes()
-        total_participants = Vote.get_votes_count_for_election(election)
-        total_candidates = election.election_candidates.filter(is_approved=True).count()
+        if not election:
+            return Response({"message": "Election not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = ElectionResultsSerializer(data={
-            "candidates_with_votes": candidates_with_votes,
-            "total_participants": total_participants,
-            "total_candidates": total_candidates
-        })
-        
-        serializer.is_valid()
+        candidates_with_votes = Vote.get_candidates_with_votes_ordered_by_votes(election)
 
+        # از ElectionResultSerializer برای سریالایز کردن نتایج استفاده کنید
+        serializer = ElectionResultSerializer(candidates_with_votes, many=True)
 
-        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+        return Response(serializer.data)   
+    
+    
+    
 
 
 class ApprovedCandidateListView(ListAPIView):
