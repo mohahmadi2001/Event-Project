@@ -113,8 +113,8 @@ class Vote(SoftDeleteModel):
                                   null=True
                                 )
     
-    class Meta:
-        unique_together = ('user', 'election')
+    # class Meta:
+    #     unique_together = ('user', 'election')
         
     @classmethod
     def get_votes_count_for_candidate(cls, candidate):
