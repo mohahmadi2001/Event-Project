@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import (
     CandidateRegistrationView,
-    ElectionVoteView,
+    VoteView,
     ElectionResultsView,
     ApprovedCandidateListView,
     ElectionListView
@@ -13,6 +13,6 @@ urlpatterns = [
     path('', ElectionListView.as_view(), name='election_list'),
     path('register-candidate/', CandidateRegistrationView.as_view(), name='candidate-registration'),
     path('approved-candidates/', ApprovedCandidateListView.as_view(), name='approved-candidates-list'),
-    path('vote/', ElectionVoteView.as_view(), name='election-vote'),
+    path('vote/', VoteView.as_view(), name='election-vote'),
     path('results/', ElectionResultsView.as_view(), name='election-participant-count'),
 ]

@@ -6,8 +6,8 @@ from rest_framework.views import APIView
 from elections.models import Election,Candidate,Vote
 from .serializers import  (
                            CandidateRegistrationSerializer,
-                           ElectionVoteSerializer,
-                           ElectionResultsSerializer,
+                           VoteSerializer,
+                           ElectionResultSerializer,
                            ApprovedCandidateSerializer,
                            ElectionSerializer
                         )
@@ -61,67 +61,67 @@ class CandidateRegistrationView(CreateAPIView):
            
    
 
-class ElectionVoteView(APIView):
+
+class VoteView(APIView):
     permission_classes = [AllowAny]
 
-    def post(self, request, election_id):
-        try:
-            election = Election.objects.get(id=election_id)
-        except Election.DoesNotExist:
-            return Response({"error": "Election not found."}, status=status.HTTP_404_NOT_FOUND)
-
-        if not election.is_active_election():
-            return Response({"error": "Election is not active."}, status=status.HTTP_400_BAD_REQUEST)
-
+    def post(self, request, *args, **kwargs):
         user = request.user
-        
-        if user.has_voted:
-            return Response({"error": "You have already voted."}, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = ElectionVoteSerializer(data=request.data)
+        # Deserialize ورودی API با استفاده از سریالایزر
+        serializer = VoteSerializer(data=request.data)
         if serializer.is_valid():
-            candidates_data = serializer.validated_data['candidates']
-            if len(candidates_data) > 5:
-                return Response({"limitederror": "You can vote for up to 5 candidates."}, status=status.HTTP_400_BAD_REQUEST)
+            election_id = serializer.validated_data.get('election_id')
             
-            for candidate_data in candidates_data:
-                candidate_id = candidate_data['candidate_id']
-                try:
-                    candidate = Candidate.objects.get(pk=candidate_id, election=election, is_approved=True)
-                except Candidate.DoesNotExist:
-                    return Response({"invaliderror": "Invalid candidate ID."}, status=status.HTTP_400_BAD_REQUEST)
-                
-                Vote.objects.create(user=user, election=election, candidate=candidate)
+            # بررسی وجود انتخابات با استفاده از شناسه انتخابات
+            try:
+                election = Election.objects.get(id=election_id)
+            except Election.DoesNotExist:
+                return Response({"message": "Election does not exist."}, status=status.HTTP_400_BAD_REQUEST)
 
-            user.has_voted = True
-            user.save()
+            # بررسی اینکه انتخابات فعال است و زمان رای‌گیری فرا رسیده است
+            if not election.is_active_election():
+                return Response({"message": "This election is not active or has not started yet."}, status=status.HTTP_400_BAD_REQUEST)
 
-            return Response({"message": "Votes submitted successfully."}, status=status.HTTP_201_CREATED)
+            # بررسی اینکه کاربر هنوز به این انتخابات رای نداده است
+            existing_vote = Vote.objects.filter(user=user, election=election).first()
+            if existing_vote:
+                return Response({"message": "You have already voted in this election."}, status=status.HTTP_400_BAD_REQUEST)
+
+            candidate_ids = serializer.validated_data.get('candidate_ids')
+
+            # بررسی تعداد کاندید‌های انتخاب شده
+            if len(candidate_ids) > 5:
+                return Response({"message": "You can vote for a maximum of 5 candidates."}, status=status.HTTP_400_BAD_REQUEST)
+
+            # ثبت رای‌ها
+            for candidate_id in candidate_ids:
+                candidate = Candidate.objects.get(id=candidate_id)
+                vote = Vote(user=user, candidate=candidate, election=election)
+                vote.save()
+
+            return Response({"message": "Your votes have been cast successfully."}, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     
 
 class ElectionResultsView(APIView):
-    def get(self, request):
-        elections = Election.objects.all()
+    def get(self, request, *args, **kwargs):
+        # فقط یک انتخابات دارید، بنابراین می‌توانید آن را به صورت ثابت انتخاب کنید
+        election = Election.objects.first()
 
-        results = []
-        for election in elections:
-            candidates_with_votes = election.get_candidates_with_votes_ordered_by_votes()
-            total_participants = Vote.get_votes_count_for_election(election)
-            total_candidates = election.election_candidates.filter(is_approved=True).count()
+        if not election:
+            return Response({"message": "Election not found."}, status=status.HTTP_404_NOT_FOUND)
 
-            results.append({
-                "candidates_with_votes": candidates_with_votes,
-                "total_participants": total_participants,
-                "total_candidates": total_candidates
-            })
+        candidates_with_votes = Vote.get_candidates_with_votes_ordered_by_votes(election)
 
-        serializer = ElectionResultsSerializer(data=results, many=True)
-        serializer.is_valid()
-
-        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+        # از ElectionResultSerializer برای سریالایز کردن نتایج استفاده کنید
+        serializer = ElectionResultSerializer(candidates_with_votes, many=True)
+        return Response(serializer.data)   
+    
+    
+    
 
 
 class ApprovedCandidateListView(ListAPIView):
