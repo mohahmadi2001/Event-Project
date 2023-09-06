@@ -118,7 +118,6 @@ class ElectionResultsView(APIView):
 
         # از ElectionResultSerializer برای سریالایز کردن نتایج استفاده کنید
         serializer = ElectionResultSerializer(candidates_with_votes, many=True)
-
         return Response(serializer.data)   
     
     

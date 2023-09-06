@@ -57,6 +57,7 @@ class UserUpdateSerializer(UserSerializer):
         
 class CustomSetPasswordSerializer(SetPasswordSerializer):
     new_password = serializers.CharField(write_only=True, required=True, validators=[...]) 
+    re_new_password = serializers.CharField(write_only=True, required=True, validators=[...]) 
 
     def validate(self, attrs):
         new_password = attrs.get('new_password')
