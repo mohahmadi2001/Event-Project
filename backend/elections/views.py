@@ -68,33 +68,27 @@ class VoteView(APIView):
     def post(self, request, *args, **kwargs):
         user = request.user
 
-        # Deserialize ورودی API با استفاده از سریالایزر
         serializer = VoteSerializer(data=request.data)
         if serializer.is_valid():
             election_id = serializer.validated_data.get('election_id')
             
-            # بررسی وجود انتخابات با استفاده از شناسه انتخابات
             try:
                 election = Election.objects.get(id=election_id)
             except Election.DoesNotExist:
                 return Response({"message": "Election does not exist."}, status=status.HTTP_400_BAD_REQUEST)
 
-            # بررسی اینکه انتخابات فعال است و زمان رای‌گیری فرا رسیده است
             if not election.is_active_election():
                 return Response({"message": "This election is not active or has not started yet."}, status=status.HTTP_400_BAD_REQUEST)
 
-            # بررسی اینکه کاربر هنوز به این انتخابات رای نداده است
             existing_vote = Vote.objects.filter(user=user, election=election).first()
             if existing_vote:
                 return Response({"message": "You have already voted in this election."}, status=status.HTTP_400_BAD_REQUEST)
 
             candidate_ids = serializer.validated_data.get('candidate_ids')
 
-            # بررسی تعداد کاندید‌های انتخاب شده
             if len(candidate_ids) > 5:
                 return Response({"message": "You can vote for a maximum of 5 candidates."}, status=status.HTTP_400_BAD_REQUEST)
 
-            # ثبت رای‌ها
             for candidate_id in candidate_ids:
                 candidate = Candidate.objects.get(id=candidate_id)
                 vote = Vote(user=user, candidate=candidate, election=election)
@@ -108,7 +102,6 @@ class VoteView(APIView):
 
 class ElectionResultsView(APIView):
     def get(self, request, *args, **kwargs):
-        # فقط یک انتخابات دارید، بنابراین می‌توانید آن را به صورت ثابت انتخاب کنید
         election = Election.objects.first()
 
         if not election:
@@ -116,7 +109,6 @@ class ElectionResultsView(APIView):
 
         candidates_with_votes = Vote.get_candidates_with_votes_ordered_by_votes(election)
 
-        # از ElectionResultSerializer برای سریالایز کردن نتایج استفاده کنید
         serializer = ElectionResultSerializer(candidates_with_votes, many=True)
         return Response(serializer.data)   
     
