@@ -107,6 +107,11 @@ class Vote(SoftDeleteModel):
                                  on_delete=models.CASCADE,
                                  related_name="election_votes"
                                  )
+    candidate = models.ForeignKey(Candidate,
+                                  verbose_name=_("candidate"),
+                                  on_delete=models.CASCADE,
+                                  null=True
+                                )
     
     class Meta:
         unique_together = ('user', 'election')
