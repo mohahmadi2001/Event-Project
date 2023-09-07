@@ -45,11 +45,7 @@ class CandidateRegistrationView(CreateAPIView):
             )
             
         existing_candidate = Candidate.objects.filter(
-            first_name=request.data['first_name'],
-            last_name=request.data['last_name'],
-            mobile=request.data['mobile'],
             student_number=request.data['student_number'],
-            election=election
         ).first()
 
         if existing_candidate:
