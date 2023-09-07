@@ -59,6 +59,7 @@ class StudentInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = User  
         fields = ('student_number','first_name','last_name' ,'has_voted')    
+     
         
 class CustomSetPasswordSerializer(SetPasswordSerializer):
     new_password = serializers.CharField(write_only=True, required=True, validators=[...]) 

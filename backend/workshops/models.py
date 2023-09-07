@@ -18,11 +18,15 @@ class Event(SoftDeleteModel):
                                     )
     start_event_at = models.DateTimeField(_("Start Event At"))
     end_event_at = models.DateTimeField(_("End Event At"))
+    user = models.ManyToManyField(
+                                "accounts.User",
+                                verbose_name=_("user")
+                            )
 
     def __str__(self):
         return self.title
     
-# Create
+    # Create
     def create_event(title, description, location, capacity, price, image, start_event_at, end_event_at):
         event = Event(
             title=title,
@@ -62,4 +66,20 @@ class Event(SoftDeleteModel):
         except Event.DoesNotExist:
             return None
      
+     
+class RegisterEvent(SoftDeleteModel):
+    user = models.ForeignKey(
+        "accounts.User",
+        verbose_name=_("user"), 
+        on_delete=models.CASCADE,
+        related_name="user_event"
+    )
+    event_related = models.ForeignKey(
+        Event,
+        verbose_name=_("event_related"),
+        on_delete=models.CASCADE,
+        related_name="event_for_user"
+    )
         
+    def __str__(self):
+        return f"Registration for '{self.event_related.title}' by {self.user.email}"

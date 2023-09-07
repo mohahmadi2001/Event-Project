@@ -1,7 +1,6 @@
 from django.utils import timezone
 from rest_framework import serializers
-from .models import Candidate, Election, Vote
-
+from .models import Candidate, Election
 
 class ElectionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -45,9 +44,6 @@ class ApprovedCandidateSerializer(serializers.ModelSerializer):
         model = Candidate
         fields = ('id', 'first_name', 'last_name','entry_year')
 
-
-
-    
     
 class CandidateWithVotesSerializer(serializers.Serializer):
     candidate = serializers.SerializerMethodField()
@@ -61,6 +57,7 @@ class CandidateWithVotesSerializer(serializers.Serializer):
             "last_name": candidate.last_name,
             "entry_year": candidate.entry_year
         }
+
 
 class ElectionResultSerializer(serializers.Serializer):
     candidate_id = serializers.IntegerField(source='candidate__id')
