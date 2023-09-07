@@ -60,8 +60,6 @@ class CandidateRegistrationView(CreateAPIView):
         )
            
    
-
-
 class VoteView(APIView):
     permission_classes = [IsStudent]
 
@@ -103,7 +101,6 @@ class VoteView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     
-
 class ElectionResultsView(APIView):
     def get(self, request, *args, **kwargs):
         election = Election.objects.first()
@@ -117,9 +114,6 @@ class ElectionResultsView(APIView):
         return Response(serializer.data)   
     
     
-    
-
-
 class ApprovedCandidateListView(ListAPIView):
     serializer_class = ApprovedCandidateSerializer
     permission_classes = [AllowAny]
@@ -128,3 +122,24 @@ class ApprovedCandidateListView(ListAPIView):
         return Candidate.get_approved_candidates()
     
 
+class ElectionStatsView(APIView):
+    def get(self, request, *args, **kwargs):
+        election = Election.objects.first()
+
+        if not election:
+            return Response({"message": "Election not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        total_candidates = election.election_candidates.filter(is_approved=True).count()
+        total_participants = election.get_total_participants()
+        remaining_election_time = election.get_remaining_election_time(election)
+        remaining_registration_time = election.get_remaining_registration_time(election)
+
+        
+        data = {
+            "total_approved_candidates": total_candidates,
+            "total_participants": total_participants,
+            "remaining_election_time": remaining_election_time,
+            "remaining_registration_time": remaining_registration_time,
+        }
+
+        return Response(data, status=status.HTTP_200_OK)

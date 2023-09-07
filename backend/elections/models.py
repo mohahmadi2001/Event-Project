@@ -12,6 +12,7 @@ class Candidate(SoftDeleteModel):
     mobile = models.CharField(_("mobile number"), max_length=11, unique=True, blank=True, null=True)
     student_number = models.CharField(_("student number"), max_length=50, blank=True,null=True,unique=True)
     entry_year = models.PositiveIntegerField(_("Entry Year"), blank=True, null=True)
+    description = models.TextField(_("description"),null=True)
     registration_date = models.DateTimeField(_("Registration Date"), auto_now_add=True)
     is_approved = models.BooleanField(_("Approved"), default=False)
     election = models.ForeignKey("elections.Election",
@@ -41,6 +42,8 @@ class Candidate(SoftDeleteModel):
             'last_name': self.last_name,
             'entry_year': self.entry_year,
         }
+    
+    
         
        
 class Election(SoftDeleteModel):
@@ -89,6 +92,13 @@ class Election(SoftDeleteModel):
         return f"{remaining_days} days, {remaining_hours} hours, {remaining_minutes} minutes, {remaining_seconds} seconds"
     
     
+
+    def get_total_participants(self):
+        """
+        Get the total number of participants (users who have voted) in this election.
+        """
+        return self.election_votes.values('user').distinct().count()
+
     
        
 class Vote(SoftDeleteModel):

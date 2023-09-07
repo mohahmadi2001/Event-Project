@@ -18,6 +18,7 @@ class CandidateRegistrationSerializer(serializers.ModelSerializer):
             'mobile',
             'student_number',
             'entry_year',
+            'description',
             'election'
         )
         
@@ -31,7 +32,7 @@ class CandidateRegistrationSerializer(serializers.ModelSerializer):
         else:
             raise serializers.ValidationError("Election information is missing in context.")
         
-        required_fields = ['first_name', 'last_name', 'mobile', 'student_number']
+        required_fields = ['first_name', 'last_name', 'mobile', 'student_number','description']
         for field in required_fields:
             if not data.get(field):
                 raise serializers.ValidationError(f"{field} is required.")
