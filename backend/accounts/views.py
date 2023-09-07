@@ -70,22 +70,6 @@ class UserUpdateView(UpdateAPIView):
         return Response(serializer.data)
     
 
-# class CustomSetPasswordView(APIView):
-#     serializer_class = CustomSetPasswordSerializer
-
-#     def put(self, request, *args, **kwargs):
-#         serializer = self.serializer_class(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         user = self.request.user
-
-#         if not user.check_password(serializer.validated_data['old_password']):
-#             return Response({"old_password": "Wrong password."}, status=status.HTTP_400_BAD_REQUEST)
-
-#         user.set_password(serializer.validated_data['new_password'])
-#         user.save()
-
-#         return Response({"message": "Password changed successfully."}, status=status.HTTP_200_OK)
-
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -99,21 +83,19 @@ class ChangePasswordView(APIView):
 
             user = request.user
 
-            # Verify the old password
             if not user.check_password(old_password):
                 return Response({'detail': 'Old password is incorrect.'}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Check if the new password and confirm_new_password match
             if new_password != confirm_new_password:
                 return Response({'detail': 'New passwords do not match.'}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Update the user's password
             user.set_password(new_password)
             user.save()
 
             return Response({'detail': 'Password changed successfully.'}, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class StudentInfoAPIView(generics.ListAPIView):
     queryset = User.objects.filter(is_student=True)  
