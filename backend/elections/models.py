@@ -43,7 +43,7 @@ class Candidate(SoftDeleteModel):
             'entry_year': self.entry_year,
         }
     
-       
+    
 class Election(SoftDeleteModel):
     title = models.CharField(_("Title"), max_length=50)
     slug = models.SlugField(_("Slug"), unique=True)

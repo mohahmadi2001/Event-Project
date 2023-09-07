@@ -10,8 +10,8 @@ from .serializers import  (
                            ApprovedCandidateSerializer,
                            ElectionSerializer
                         )
-from accounts.permissions import IsStudent
 from rest_framework.permissions import AllowAny
+
 
 
 
@@ -145,3 +145,34 @@ class ElectionStatsView(APIView):
         }
 
         return Response(data, status=status.HTTP_200_OK)
+
+
+
+class TopCandidatesView(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request, *args, **kwargs):
+        try:
+            election = Election.objects.first()
+        except Election.DoesNotExist:
+            return Response({"message": "There is no active election."}, status=status.HTTP_404_NOT_FOUND)
+
+
+        top_candidates = Vote.get_candidates_with_votes_ordered_by_votes(election)
+
+        top_candidates_list = []
+
+        max_top_candidates = election.max_votes_per_user
+
+        last_place_votes = top_candidates[max_top_candidates - 1]['votes_count']
+
+        for candidate in top_candidates:
+            if candidate['votes_count'] >= last_place_votes:
+                top_candidates_list.append({
+                    "first_name": candidate["candidate__first_name"],
+                    "last_name": candidate["candidate__last_name"],
+                    "entry_year": candidate["candidate__entry_year"],
+                    "votes_count": candidate["votes_count"],
+                })
+
+        return Response(top_candidates_list, status=status.HTTP_200_OK)
+   
