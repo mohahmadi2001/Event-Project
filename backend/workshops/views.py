@@ -54,7 +54,6 @@ class RegisterEventView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
  
-
 class RegisteredEventsView(APIView):
     permission_classes = [IsAuthenticated]
 

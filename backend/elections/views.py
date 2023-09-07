@@ -64,6 +64,9 @@ class VoteView(APIView):
 
     def post(self, request, *args, **kwargs):
         user = request.user
+        
+        if not user.is_student:
+            return Response({"studenterror": "You are not a student and cannot vote."}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = VoteSerializer(data=request.data)
         if serializer.is_valid():
