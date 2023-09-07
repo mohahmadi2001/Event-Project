@@ -114,7 +114,7 @@ class Vote(SoftDeleteModel):
                                 )
     
     def __str__(self):
-        return f"{self.candidate}"
+        return f"Vote for {self.candidate}"
         
     @classmethod
     def get_votes_count_for_candidate(cls, candidate):
