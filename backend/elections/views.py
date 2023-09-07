@@ -134,6 +134,7 @@ class ElectionStatsView(APIView):
         remaining_election_time = election.get_remaining_election_time(election)
         remaining_registration_time = election.get_remaining_registration_time(election)
 
+        
         data = {
             "total_approved_candidates": total_candidates,
             "total_participants": total_participants,
