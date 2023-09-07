@@ -58,12 +58,8 @@ class CandidateRegistrationView(CreateAPIView):
         serializer = self.get_serializer(data=request.data, context={'election': election})
         serializer.is_valid(raise_exception=True)
 
-        candidate = serializer.save()
-        if candidate is None:
-            return Response(
-                {"failederror": "Candidate registration failed."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        serializer.save()
+        
         return Response(
             {"message": "Candidate registered successfully."},
             status=status.HTTP_201_CREATED
