@@ -84,15 +84,15 @@ class ChangePasswordView(APIView):
             user = request.user
 
             if not user.check_password(old_password):
-                return Response({'detail': 'Old password is incorrect.'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'incorrecterror': 'Old password is incorrect.'}, status=status.HTTP_400_BAD_REQUEST)
 
             if new_password != confirm_new_password:
-                return Response({'detail': 'New passwords do not match.'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'matcherror': 'New passwords do not match.'}, status=status.HTTP_400_BAD_REQUEST)
 
             user.set_password(new_password)
             user.save()
 
-            return Response({'detail': 'Password changed successfully.'}, status=status.HTTP_200_OK)
+            return Response({'message': 'Password changed successfully.'}, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
