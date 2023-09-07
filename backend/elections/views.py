@@ -40,7 +40,18 @@ class CandidateRegistrationView(CreateAPIView):
         election = self.get_election()
         if not election:
             return Response(
-                {"error": "Election does not exist."},
+                {"electionerror": "Election does not exist."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        existing_candidate = Candidate.objects.filter(
+            student_number=request.data['student_number'],
+            election=election
+        ).first()
+
+        if existing_candidate:
+            return Response(
+                {"existserror": "Candidate with the same information already exists."},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -50,7 +61,7 @@ class CandidateRegistrationView(CreateAPIView):
         candidate = serializer.save()
         if candidate is None:
             return Response(
-                {"error": "Candidate registration failed."},
+                {"failederror": "Candidate registration failed."},
                 status=status.HTTP_400_BAD_REQUEST
             )
         return Response(
