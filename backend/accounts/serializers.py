@@ -61,15 +61,20 @@ class StudentInfoSerializer(serializers.ModelSerializer):
         fields = ('student_number','first_name','last_name' ,'has_voted')    
      
         
-class CustomSetPasswordSerializer(SetPasswordSerializer):
-    new_password = serializers.CharField(write_only=True, required=True, validators=[...]) 
-    re_new_password = serializers.CharField(write_only=True, required=True, validators=[...]) 
+# class CustomSetPasswordSerializer(SetPasswordSerializer):
+#     new_password = serializers.CharField(write_only=True, required=True, validators=[...]) 
+#     re_new_password = serializers.CharField(write_only=True, required=True, validators=[...]) 
 
-    def validate(self, attrs):
-        new_password = attrs.get('new_password')
-        re_new_password = attrs.get('re_new_password')
+#     def validate(self, attrs):
+#         new_password = attrs.get('new_password')
+#         re_new_password = attrs.get('re_new_password')
 
-        if new_password != re_new_password:
-            raise serializers.ValidationError({"re_new_password": "Passwords do not match."})
+#         if new_password != re_new_password:
+#             raise serializers.ValidationError({"re_new_password": "Passwords do not match."})
 
-        return attrs
+#         return attrs
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+    confirm_new_password = serializers.CharField(required=True)

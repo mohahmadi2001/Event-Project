@@ -54,12 +54,16 @@ class RegisterEventView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
  
-class RegisteredEventListView(ListAPIView):
-    serializer_class = RegisteredEventSerializer
+
+class RegisteredEventsView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        user = self.request.user
-        return user.events.all()
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        registered_events = RegisterEvent.objects.filter(user=user)
+
+        serializer = RegisteredEventSerializer(registered_events, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
