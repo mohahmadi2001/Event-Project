@@ -43,8 +43,6 @@ class Candidate(SoftDeleteModel):
             'entry_year': self.entry_year,
         }
     
-    
-        
        
 class Election(SoftDeleteModel):
     title = models.CharField(_("Title"), max_length=50)
@@ -100,7 +98,6 @@ class Election(SoftDeleteModel):
         return self.election_votes.values('user').distinct().count()
 
     
-       
 class Vote(SoftDeleteModel):
     user = models.ForeignKey("accounts.User", on_delete=models.CASCADE)
     election = models.ForeignKey(Election,

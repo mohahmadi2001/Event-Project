@@ -66,6 +66,7 @@ class Event(SoftDeleteModel):
         except Event.DoesNotExist:
             return None
      
+     
 class RegisterEvent(SoftDeleteModel):
     user = models.ForeignKey(
         "accounts.User",

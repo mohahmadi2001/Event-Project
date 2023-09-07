@@ -1,4 +1,3 @@
-from rest_framework.generics import ListCreateAPIView
 from rest_framework.generics import ListAPIView,CreateAPIView
 from rest_framework.response import Response
 from rest_framework import status
