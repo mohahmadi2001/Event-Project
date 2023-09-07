@@ -60,7 +60,7 @@ class CandidateRegistrationView(CreateAPIView):
            
    
 class VoteView(APIView):
-    permission_classes = [IsStudent]
+    permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
         user = request.user
