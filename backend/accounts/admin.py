@@ -1,42 +1,25 @@
 from django.contrib import admin
-from accounts.models import User
-from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from .models import User
 
+class UserAdmin(BaseUserAdmin):
+    list_display = ('email', 'first_name', 'last_name', 'is_student', 'is_staff')
+    list_filter = ('is_staff', 'is_superuser', 'is_student', 'has_voted')
+    search_fields = ('email', 'first_name', 'last_name')
+    ordering = ('email',)
 
-# class UserAdmin(BaseUserAdmin):
-#     list_display = ['email', 'mobile',
-#                     'first_name', 'last_name', 'is_active', ]
-#     ordering = ['email']
-#     search_fields = ['mobile', 'email']
-#     readonly_fields = ['date_joined', 'last_login']
-#     add_fieldsets = (
-#         (None, {
-#             'classes': ('wide',),
-#             'fields': ('email', 'mobile', 'password1', 'password2')
-#         }),
-#     )
-#     fieldsets = (
-#         (None, {
-#             "fields": (
-#                 'email',
-#                 'mobile',
-#                 'password',
-#             ),
-#         }),
-#         (_('Personal info'), {
-#             "fields": ('first_name', 'last_name')
-#         }),
-#         (_('Permissions'), {
-#             "fields": ('is_staff', 'is_active', 'is_superuser',
-#                        "groups",
-#                        "user_permissions",
-#                        )
-#         }),
-#         (_('Important dates'), {
-#             "fields": ('last_login', 'date_joined')
-#         }),
-#     )
+    fieldsets = (
+        (None, {'fields': ('email', 'password')}),
+        ('Personal Info', {'fields': ('first_name', 'last_name', 'mobile', 'student_number')}),
+        ('Permissions', {'fields': ('is_student', 'is_staff', 'is_superuser', 'has_voted', 'groups', 'user_permissions')}),
+        ('Important dates', {'fields': ('last_login', 'date_joined')}),
+    )
 
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'password1', 'password2'),
+        }),
+    )
 
-admin.site.register(User)
+admin.site.register(User, UserAdmin)
