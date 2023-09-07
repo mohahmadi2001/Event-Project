@@ -41,6 +41,8 @@ class Candidate(SoftDeleteModel):
             'last_name': self.last_name,
             'entry_year': self.entry_year,
         }
+    
+    
         
        
 class Election(SoftDeleteModel):
@@ -89,6 +91,13 @@ class Election(SoftDeleteModel):
         return f"{remaining_days} days, {remaining_hours} hours, {remaining_minutes} minutes, {remaining_seconds} seconds"
     
     
+
+    def get_total_participants(self):
+        """
+        Get the total number of participants (users who have voted) in this election.
+        """
+        return self.election_votes.values('user').distinct().count()
+
     
        
 class Vote(SoftDeleteModel):

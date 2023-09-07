@@ -4,7 +4,8 @@ from .views import (
     VoteView,
     ElectionResultsView,
     ApprovedCandidateListView,
-    ElectionListView
+    ElectionListView,
+    ElectionStatsView
     )
 
 
@@ -15,4 +16,5 @@ urlpatterns = [
     path('approved-candidates/', ApprovedCandidateListView.as_view(), name='approved-candidates-list'),
     path('vote/', VoteView.as_view(), name='election-vote'),
     path('results/', ElectionResultsView.as_view(), name='election-participant-count'),
+    path('status/', ElectionStatsView.as_view(), name='election-status'),
 ]
