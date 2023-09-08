@@ -11,12 +11,13 @@ from .serializers import  (
                            ElectionSerializer
                         )
 from rest_framework.permissions import AllowAny
+from accounts.permissions import IsStudent
 
 
 
 
 class ElectionListView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsStudent]
     def get(self, request):
         user = request.user
         
@@ -72,7 +73,7 @@ class CandidateRegistrationView(CreateAPIView):
            
    
 class VoteView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsStudent]
 
     def post(self, request, *args, **kwargs):
         user = request.user
@@ -116,6 +117,7 @@ class VoteView(APIView):
 
     
 class ElectionResultsView(APIView):
+    permission_classes = [IsStudent]
     def get(self, request, *args, **kwargs):
         user = request.user
         
@@ -135,7 +137,7 @@ class ElectionResultsView(APIView):
     
 class ApprovedCandidateListView(ListAPIView):
     serializer_class = ApprovedCandidateSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsStudent]
 
     def get_queryset(self,request):
         user = request.user
@@ -147,6 +149,8 @@ class ApprovedCandidateListView(ListAPIView):
     
 
 class ElectionStatsView(APIView):
+    permission_classes = [IsStudent]
+
     def get(self, request, *args, **kwargs):
         user = request.user
         
