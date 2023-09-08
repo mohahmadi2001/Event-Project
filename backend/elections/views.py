@@ -11,19 +11,13 @@ from .serializers import  (
                            ElectionSerializer
                         )
 from rest_framework.permissions import AllowAny
-from accounts.permissions import IsStudent
 
 
 
 
 class ElectionListView(APIView):
-    permission_classes = [IsStudent]
+    permission_classes = [AllowAny]
     def get(self, request):
-        user = request.user
-        
-        if not user.is_student:
-            return Response({"studenterror": "You are not a student"}, status=status.HTTP_400_BAD_REQUEST)
-        
         election = Election.objects.all()
         serializer = ElectionSerializer(election, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -73,7 +67,7 @@ class CandidateRegistrationView(CreateAPIView):
            
    
 class VoteView(APIView):
-    permission_classes = [IsStudent]
+    permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
         user = request.user
@@ -117,13 +111,7 @@ class VoteView(APIView):
 
     
 class ElectionResultsView(APIView):
-    permission_classes = [IsStudent]
     def get(self, request, *args, **kwargs):
-        user = request.user
-        
-        if not user.is_student:
-            return Response({"studenterror": "You are not a student"}, status=status.HTTP_400_BAD_REQUEST)
-        
         election = Election.objects.first()
 
         if not election:
@@ -137,25 +125,14 @@ class ElectionResultsView(APIView):
     
 class ApprovedCandidateListView(ListAPIView):
     serializer_class = ApprovedCandidateSerializer
-    permission_classes = [IsStudent]
+    permission_classes = [AllowAny]
 
-    def get_queryset(self,request):
-        user = request.user
-        
-        if not user.is_student:
-            return Response({"studenterror": "You are not a student"}, status=status.HTTP_400_BAD_REQUEST)
-        
+    def get_queryset(self):
         return Candidate.get_approved_candidates()
     
 
 class ElectionStatsView(APIView):
-    permission_classes = [IsStudent]
-
     def get(self, request, *args, **kwargs):
-        user = request.user
-        
-        if not user.is_student:
-            return Response({"studenterror": "You are not a student"}, status=status.HTTP_400_BAD_REQUEST)
         election = Election.objects.first()
 
         if not election:
