@@ -42,7 +42,7 @@ class UserRegistrationView(CreateAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        user = serializer.save()
+        serializer.save()
         return Response(
             {"message": "User registered successfully."},
             status=status.HTTP_201_CREATED
