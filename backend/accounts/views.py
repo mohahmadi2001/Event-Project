@@ -30,7 +30,7 @@ class UserRegistrationView(CreateAPIView):
         student_number = serializer.validated_data.get('student_number')
         if is_student and student_number is None:
             return Response(
-                {"error": "Student number is required for students."},
+                {"stdnumerror": "Student number is required for students."},
                 status=status.HTTP_400_BAD_REQUEST
             )
             
@@ -42,12 +42,7 @@ class UserRegistrationView(CreateAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        user = serializer.save()
-        if user is None:
-            return Response(
-                {"error": "User registration failed."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        serializer.save()
         return Response(
             {"message": "User registered successfully."},
             status=status.HTTP_201_CREATED

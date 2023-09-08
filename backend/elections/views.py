@@ -18,6 +18,11 @@ from rest_framework.permissions import AllowAny
 class ElectionListView(APIView):
     permission_classes = [AllowAny]
     def get(self, request):
+        user = request.user
+        
+        if not user.is_student:
+            return Response({"studenterror": "You are not a student"}, status=status.HTTP_400_BAD_REQUEST)
+        
         election = Election.objects.all()
         serializer = ElectionSerializer(election, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -112,6 +117,11 @@ class VoteView(APIView):
     
 class ElectionResultsView(APIView):
     def get(self, request, *args, **kwargs):
+        user = request.user
+        
+        if not user.is_student:
+            return Response({"studenterror": "You are not a student"}, status=status.HTTP_400_BAD_REQUEST)
+        
         election = Election.objects.first()
 
         if not election:
@@ -127,12 +137,21 @@ class ApprovedCandidateListView(ListAPIView):
     serializer_class = ApprovedCandidateSerializer
     permission_classes = [AllowAny]
 
-    def get_queryset(self):
+    def get_queryset(self,request):
+        user = request.user
+        
+        if not user.is_student:
+            return Response({"studenterror": "You are not a student"}, status=status.HTTP_400_BAD_REQUEST)
+        
         return Candidate.get_approved_candidates()
     
 
 class ElectionStatsView(APIView):
     def get(self, request, *args, **kwargs):
+        user = request.user
+        
+        if not user.is_student:
+            return Response({"studenterror": "You are not a student"}, status=status.HTTP_400_BAD_REQUEST)
         election = Election.objects.first()
 
         if not election:
