@@ -10,7 +10,7 @@ class EventAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('title', 'slug', 'description', 'location', 'capacity', 'price', 'image')}),
         ('Event Dates', {'fields': ('start_event_at', 'end_event_at')}),
-        ('Participants', {'fields': ('user',)}),
+        # ('Participants', {'fields': ('user',)}),
     )
 
 admin.site.register(Event, EventAdmin)
