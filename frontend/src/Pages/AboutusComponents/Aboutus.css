@@ -1,0 +1,19 @@
+.about-us-container {
+  min-height: 80vh;
+}
+
+.about-us-title-sp {
+  color: var(--main-navy-blue);
+  text-align: right;
+  margin-right: 100px;
+  margin-top: 20px;
+  margin-bottom: 15px;
+}
+
+.about-us-text-sp {
+  direction: rtl;
+  margin-left: 200px;
+  margin-right: 200px;
+  margin-bottom: 65px;
+  font-size: 18px;
+}

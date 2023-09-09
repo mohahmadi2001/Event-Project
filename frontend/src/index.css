@@ -1,0 +1,246 @@
+:root {
+  --main-orange: #ff902f;
+  --main-navy-blue: #1a2961;
+}
+
+@font-face {
+  font-family: "Kalameh";
+  src: url("Fonts/Kalameh-Regular.ttf") format("ttf");
+  /* Add additional formats if needed */
+  font-weight: normal;
+  font-style: normal;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Kalameh, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: whitesmoke;
+}
+
+.clear {
+  clear: both;
+}
+
+/* Navbar Styles */
+.navbar {
+  background-color: #afafaf;
+  margin-bottom: 40px;
+}
+
+.sticky {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 100;
+}
+
+.navbarBrand {
+  margin-left: 15px;
+}
+
+.navbarBrand:hover,
+.navbarBrand:active,
+.navbarBrand:focus,
+.navLink,
+.navbarBrand {
+  color: var(--main-navy-blue);
+}
+
+.navLink:hover {
+  color: #fff;
+  background-color: #ff902f;
+  border-radius: 5px;
+}
+
+.navbar-nav {
+  --bs-nav-link-hover-color: #f4f6fc;
+}
+
+#basic-navbar-nav {
+  margin-right: 20px;
+}
+
+.btn {
+  border: none;
+  border-radius: 10px;
+  background-color: var(--main-orange);
+  color: #fff;
+  font-size: 15px;
+}
+
+.btn-outline-primary {
+  --bs-btn-active-bg: #1a2961;
+}
+
+.btn:active,
+.btn:hover {
+  background-color: var(--bs-btn-active-bg);
+}
+
+.search-input {
+  direction: rtl;
+}
+
+.search-input::placeholder {
+  font-size: 12px;
+}
+
+.signup-login-logout-button {
+  margin-right: 35px;
+  display: flex;
+  padding: 9px;
+  background-color: var(--main-orange);
+  border-radius: 5px;
+  color: #fff;
+  border: none;
+}
+
+.signup-login-logout-button:hover,
+.signup-login-logout-button:active {
+  background-color: var(--main-navy-blue);
+}
+
+.logout-icon {
+  width: 30px;
+  height: 30px;
+  margin-right: 8px;
+}
+
+.profile-icon {
+  width: 30px;
+  height: 30px;
+  margin-right: 20px;
+}
+
+/* Footer Styles */
+.footer {
+  background-color: #444444;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer-row {
+  display: flex;
+  justify-content: center;
+  gap: 250px;
+}
+
+.social {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.social-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.social-icon-link {
+  color: inherit;
+}
+
+.social-footer-title,
+.contactus-footer-title,
+.aboutus-footer-title {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.sciconnect-logo {
+  width: 150px;
+  height: 120px;
+  cursor: pointer;
+}
+
+/* SignUpLoginForms Styles */
+.form-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.form-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 40px;
+}
+
+.active--SL {
+  border: none;
+  border-radius: 5px;
+  background-color: var(--main-navy-blue);
+  color: #fff;
+  padding: 10px;
+}
+
+.signup--toggler,
+.login--toggler {
+  background-color: transparent;
+  border: none;
+}
+
+.signup-form,
+.login-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 20px;
+  row-gap: 20px;
+  justify-items: center;
+  align-items: center;
+  margin-left: 21rem;
+  margin-right: 21rem;
+  margin-bottom: 30px;
+}
+
+.login-form {
+  column-gap: 0;
+}
+
+.label {
+  width: 100px;
+  text-align: center;
+}
+
+.text-input,
+.password-input {
+  border: 1px solid #444444;
+  background-color: transparent;
+  border-radius: 5px;
+  direction: rtl;
+  /* position: relative; */
+}
+
+.password-input {
+  direction: ltr;
+}
+
+input[type="password"] {
+  color: #d1670a;
+}
+
+.ant-modal {
+  font-family: Kalameh, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.ant-modal .ant-modal-footer {
+  text-align: center;
+  margin-bottom: 12px;
+}

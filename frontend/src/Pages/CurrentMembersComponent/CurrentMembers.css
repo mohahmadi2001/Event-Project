@@ -1,0 +1,21 @@
+.current-members-container {
+  min-height: 75vh;
+  align-content: center;
+}
+
+.current-members-title {
+  color: var(--main-navy-blue);
+  text-align: right;
+  margin-right: 100px;
+  margin-top: 5px;
+  margin-bottom: 45px;
+  font-size: 25px;
+}
+
+.current-members {
+  display: grid;
+  justify-items: center;
+  grid-template-columns: repeat(2, 1fr);
+  margin-right: 8rem;
+  font-size: 20px;
+}

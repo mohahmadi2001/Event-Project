@@ -1,0 +1,137 @@
+:root {
+  --main-orange: #ff902f;
+  --main-navy-blue: #1a2961;
+}
+
+/* election main page */
+.election-container {
+  min-height: 90vh;
+  direction: rtl;
+}
+
+.election-title-sp {
+  color: var(--main-navy-blue);
+  text-align: right;
+  margin-right: 100px;
+  margin-top: 20px;
+  margin-bottom: 50px;
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-items: center;
+  align-items: center;
+  row-gap: 30px;
+  margin-left: 20rem;
+  margin-right: 20rem;
+}
+
+.buttons-2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 30px;
+  margin-bottom: 60px;
+}
+
+.button {
+  color: #fff;
+  background-color: var(--main-navy-blue);
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 0px 8px 0px;
+  border: none;
+  border-radius: 8px;
+  padding: 8px;
+  text-align: center;
+  width: 135px;
+  text-decoration: none;
+}
+
+.button-submit-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.button-submit {
+  color: #fff;
+  background-color: var(--main-orange);
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 0px 8px 0px;
+  border: none;
+  border-radius: 8px;
+  padding: 15px;
+  text-decoration: none;
+}
+
+/* participate election page */
+.participate-title {
+  color: var(--main-navy-blue);
+  text-align: right;
+  margin-right: 100px;
+  /* margin-top: 20px; */
+  margin-bottom: 15px;
+}
+
+/* register candidate page */
+.register-can-title {
+  color: var(--main-navy-blue);
+  text-align: right;
+  margin-right: 100px;
+  margin-top: 20px;
+  margin-bottom: 4rem;
+}
+
+.registration-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-items: center;
+  align-items: center;
+  margin-left: 32rem;
+  margin-right: 32rem;
+  margin-bottom: 3rem;
+  row-gap: 30px;
+}
+
+.register-button-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.register-button {
+  background-color: var(--main-navy-blue);
+  border: none;
+  border-radius: 5px;
+  padding: 8px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 0px 8px 0px;
+  color: #fff;
+}
+
+.text-input-reg {
+  background-color: transparent;
+  border: 1px solid #444444;
+  border-radius: 5px;
+}
+
+.label-reg {
+  width: 125px;
+  text-align: center;
+}
+
+/* results page */
+.results-title {
+  color: var(--main-navy-blue);
+  text-align: right;
+  margin-right: 100px;
+  margin-top: 20px;
+  margin-bottom: 25px;
+}
+
+/* top candidates */
+.top-candidate-title {
+  color: var(--main-navy-blue);
+  text-align: right;
+  margin-right: 100px;
+  margin-top: 5px;
+  margin-bottom: 25px;
+}

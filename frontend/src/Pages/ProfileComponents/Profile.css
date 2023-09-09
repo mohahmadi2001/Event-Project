@@ -1,0 +1,26 @@
+.homepage-cantainer {
+  min-width: 100vh;
+}
+
+.profile-title {
+  color: var(--main-navy-blue);
+  text-align: right;
+  margin-right: 100px;
+  margin-top: 20px;
+  margin-bottom: 45px;
+}
+
+.buttons-profile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.registered-events-wrapper {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  align-items: flex-start;
+  direction: rtl;
+  margin-right: 6rem;
+  margin-bottom: 30px;
+}
