@@ -49,6 +49,7 @@ class User(AbstractBaseUser,PermissionsMixin):
         _("staff status"),
         default=False,
     )
+    student_entry_year = models.PositiveIntegerField(_("Student Entry Year"), blank=True, null=True)
     
     
     objects = UserManager()
