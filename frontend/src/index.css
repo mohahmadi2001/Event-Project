@@ -229,7 +229,7 @@ body {
 }
 
 input[type="password"] {
-  color: var(--main-orange);
+  color: #d1670a;
 }
 
 .ant-modal {
