@@ -5,6 +5,12 @@ from djoser.serializers import UserCreateSerializer,UserSerializer,SetPasswordSe
 
 User = get_user_model()
 
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'first_name', 'last_name', 'email', 'mobile', 'is_student', 'student_number', 'has_voted')
+
     
 class CustomRegistrationSerializer(UserCreateSerializer):
     password = serializers.CharField(write_only=True)

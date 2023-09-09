@@ -10,7 +10,8 @@ from .serializers import (
                           CustomRegistrationSerializer,
                           UserUpdateSerializer,
                           ChangePasswordSerializer,
-                          StudentInfoSerializer
+                          StudentInfoSerializer,
+                          UserSerializer
                         )
 from rest_framework.permissions import AllowAny
 from rest_framework import generics
@@ -96,3 +97,13 @@ class StudentInfoAPIView(generics.ListAPIView):
     queryset = User.objects.filter(is_student=True)  
     serializer_class = StudentInfoSerializer
     permission_classes = [IsAuthenticated] 
+    
+    
+class StaffUserListView(APIView):
+    permission_classes = [AllowAny] 
+    def get(self, request):
+        staff_users = User.objects.filter(is_staff=True)
+        
+        serializer = UserSerializer(staff_users, many=True)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)

@@ -3,7 +3,8 @@ from .views import (
                     UserRegistrationView,
                     UserUpdateView,
                     ChangePasswordView,
-                    StudentInfoAPIView
+                    StudentInfoAPIView,
+                    StaffUserListView
                 )
 from workshops.views import RegisteredEventsView
 
@@ -15,4 +16,5 @@ urlpatterns = [
     path('user/registered-events/', RegisteredEventsView.as_view(), name='user-registered-events'),
     path('user/change-password/', ChangePasswordView.as_view(), name='change-password'),
     path('students/', StudentInfoAPIView.as_view(), name='student-info-list'),
+    path('staff-users/', StaffUserListView.as_view(), name='staff-users-list'),
 ]
