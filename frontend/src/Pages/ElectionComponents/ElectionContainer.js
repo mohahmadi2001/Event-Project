@@ -29,6 +29,15 @@ export default function Election() {
     }
   };
 
+  const handleTopClick = (e) => {
+    e.preventDefault();
+    if (!localStorage.getItem("credentials")) {
+      alert("ابتدا وارد سایت شوید.");
+    } else {
+      window.location.href = "/election/top-candidates";
+    }
+  };
+
   return (
     <div className="election-container">
       <h2 className="election-title-sp">انتخابات</h2>
@@ -51,10 +60,24 @@ export default function Election() {
           ثبت‌نام کاندیدا
         </a>
       </div>
-      <div className="buttons-2">
+      <div className="buttons" style={{ marginBottom: "40px" }}>
         <img src="/Picture3.png" alt="results" style={{ width: "120px" }} />
-        <a className="button" href="/#" onClick={handleResultsClick}>
+        <img
+          src="/Picture5.png"
+          alt="top-candidates"
+          style={{ width: "170px" }}
+        />
+
+        <a
+          className="button"
+          href="/#"
+          onClick={handleResultsClick}
+          style={{ fontSize: "14px" }}
+        >
           مشاهده نتایج انتخابات
+        </a>
+        <a className="button" href="/#" onClick={handleTopClick}>
+          اعضای منتخب
         </a>
       </div>
     </div>

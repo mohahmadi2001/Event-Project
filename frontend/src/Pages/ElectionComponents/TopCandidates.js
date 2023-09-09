@@ -1,10 +1,10 @@
-import "./CurrentMembers.css";
+import "./Election.css";
 import React, { useState, useEffect } from "react";
 
-export default function CurrentMembers() {
-  const [currentMembers, setCurrentMembers] = useState([]);
+export default function TopCandidates() {
   const [electionInfo, setElectionInfo] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentMembers, setCurrentMembers] = useState([]);
 
   //Fetch election info
   useEffect(() => {
@@ -123,7 +123,7 @@ export default function CurrentMembers() {
         />
       </div>
       <div className="current-members-container">
-        <h2 className="current-members-title">اعضای انجمن علمی</h2>
+        <h2 className="top-candidate-title">اعضای منتخب</h2>
         <div className="content-container">
           <div className="current-members">
             {currentMembers.map((element, i) => (

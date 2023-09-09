@@ -126,3 +126,12 @@
   margin-top: 20px;
   margin-bottom: 25px;
 }
+
+/* top candidates */
+.top-candidate-title {
+  color: var(--main-navy-blue);
+  text-align: right;
+  margin-right: 100px;
+  margin-top: 5px;
+  margin-bottom: 25px;
+}

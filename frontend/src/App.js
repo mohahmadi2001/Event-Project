@@ -9,6 +9,7 @@ import ElectionContainer from "./Pages/ElectionComponents/ElectionContainer";
 import ParticipateElection from "./Pages/ElectionComponents/ParticipateElection";
 import RegisterCandidate from "./Pages/ElectionComponents/RegisterCandidate";
 import Results from "./Pages/ElectionComponents/Results";
+import TopCandidates from "./Pages/ElectionComponents/TopCandidates";
 import Profile from "./Pages/ProfileComponents/Profile";
 import CurrentMembers from "./Pages/CurrentMembersComponent/CurrentMembers";
 import "./index.css";
@@ -37,6 +38,7 @@ export default function App() {
           element={<RegisterCandidate />}
         />
         <Route path="/election/results" element={<Results />} />
+        <Route path="/election/top-candidates" element={<TopCandidates />} />
 
         <Route path="/about-us" element={<AboutusContainer />} />
         <Route path="/contact-us" element={<ContactusContainer />} />
