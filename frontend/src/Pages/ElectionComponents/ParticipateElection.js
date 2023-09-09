@@ -1,11 +1,45 @@
 import "./Election.css";
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 export default function ParticipateElection() {
   const [appCandidates, setAppCandidates] = useState([]);
   const [selectedCandidates, setSelectedCandidates] = useState([]);
   const [isError, setIsError] = useState(false);
-  // const [isVotted, setIsVotted] = useState(false); //useAuth to use it in profile
+  const [electionInfo, setElectionInfo] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [maxVotePerUser, setMaxVotePerUser] = useState(0);
+
+  //Fetch election data
+  useEffect(() => {
+    const base64Credentials = localStorage.getItem("credentials");
+    const headers = {
+      "Content-Type": "application/json",
+    };
+
+    if (base64Credentials) {
+      // headers.Authorization = `Token ${authToken}`;
+      headers.Authorization = `Basic ${base64Credentials}`;
+    }
+    fetch("http://localhost:8000/elections/", {
+      method: "GET",
+      headers: headers,
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error("Network response was not ok");
+        return response.json();
+      })
+      .then((data) => {
+        setElectionInfo(data);
+        setMaxVotePerUser(data[0].max_votes_per_user);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        setLoading(false);
+      });
+  }, []);
+
   //Fetching candidates' data from api
   useEffect(() => {
     fetch("http://localhost:8000/elections/approved-candidates/")
@@ -24,12 +58,18 @@ export default function ParticipateElection() {
     const candidateIndex = selectedCandidates.indexOf(candidateId);
     if (candidateIndex === -1) {
       // Candidate is not selected, add to selectedCandidates
-      const newSelectedCandidates = [...selectedCandidates, candidateId];
-      setSelectedCandidates(newSelectedCandidates);
-
-      // Check if selected candidates exceed half of the total candidates
-      if (newSelectedCandidates.length > appCandidates.length / 2) {
-        setIsError(true);
+      if (selectedCandidates.length < maxVotePerUser) {
+        // Check if selected candidates do not exceed the limit
+        const newSelectedCandidates = [...selectedCandidates, candidateId];
+        setSelectedCandidates(newSelectedCandidates);
+      } else {
+        toast.error(
+          `شما نمی‌توانید بیش از ${maxVotePerUser} نفر را انتخاب کنید`,
+          {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 5000, // Auto close after 5 seconds
+          }
+        );
       }
     } else {
       // Candidate is already selected, remove from selectedCandidates
@@ -49,18 +89,28 @@ export default function ParticipateElection() {
       return;
     }
 
+    const electionId = 1;
     // Create an object to send in the request body
     const voteData = {
-      selectedCandidates: selectedCandidates,
+      election_id: electionId,
+      candidate_ids: selectedCandidates,
     };
     console.log(voteData);
+
+    const base64Credentials = localStorage.getItem("credentials");
+    const headers = {
+      "Content-Type": "application/json",
+    };
+
+    if (base64Credentials) {
+      // headers.Authorization = `Token ${authToken}`;
+      headers.Authorization = `Basic ${base64Credentials}`;
+    }
 
     // Make a POST request to your server
     fetch("http://localhost:8000/elections/vote/", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: headers,
       body: JSON.stringify(voteData),
     })
       .then((response) => {
@@ -68,15 +118,96 @@ export default function ParticipateElection() {
         return response.json();
       })
       .then((data) => {
-        // Handle the response from the server if needed
-        console.log("Vote submitted successfully:", data);
-        //if submit vote ok: setIsVotted(true)
+        if (data.message) {
+          toast.success("رای شما با موفقیت ثبت شد", {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 5000, // Auto close after 2 seconds
+          });
+        }
+        if (data.existerror) {
+          toast.error("انتخابات وجود ندارد.", {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 5000, // Auto close after 2 seconds
+          });
+        }
+        if (data.activeerror) {
+          toast.error("زمان انتخابات نیست.", {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 5000, // Auto close after 2 seconds
+          });
+        }
+        if (data.votederror) {
+          toast.error("شما قبلا رای داده‌اید.", {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 5000, // Auto close after 2 seconds
+          });
+        }
+        if (data.studenterror) {
+          toast.error("شما دانشجو نیستید.", {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 5000, // Auto close after 2 seconds
+          });
+        }
+        if (data.maxerror) {
+          toast.error(`حداقل می‌توانید به ${maxVotePerUser} نفر رای بدهید.`, {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 5000, // Auto close after 2 seconds
+          });
+        }
       })
       .catch((error) => {
         console.error("Error submitting vote:", error);
         // Handle the error as needed
       });
+    setSelectedCandidates([]);
   };
+
+  if (loading) {
+    return (
+      <div className="election-container">
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "10rem",
+            marginBottom: "2rem",
+          }}
+        >
+          <h5>در حال بارگیری ...</h5>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <img
+            src="/Loading_spinner.svg.png"
+            alt="spinner"
+            style={{ width: "200px" }}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // Check if the current time is before or after the election
+  const now = new Date();
+  const electionStartedAt = new Date(electionInfo[0]?.election_started_at);
+  const electionEndedAt = new Date(electionInfo[0]?.election_ended_at);
+
+  if (now < electionStartedAt || now > electionEndedAt) {
+    return (
+      <div className="election-container">
+        <h5 style={{ color: "red", textAlign: "center" }}>
+          زمان انتخابات نیست!
+        </h5>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <img src="/4867780_prev_ui.png" alt="time-expire" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -132,7 +263,10 @@ export default function ParticipateElection() {
                 </label>
                 <input
                   type="checkbox"
-                  style={{ width: "22px" }}
+                  style={{
+                    width: "22px",
+                    accentColor: "var(--main-navy-blue)",
+                  }}
                   onChange={() => handleCandidateSelection(element.id)}
                   checked={selectedCandidates.includes(element.id)}
                   disabled={isError}

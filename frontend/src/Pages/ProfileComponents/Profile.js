@@ -182,6 +182,18 @@ export default function Profile() {
 
   function handleEditPass() {
     if (
+      !formEditPass.old_password ||
+      !formEditPass.new_password ||
+      !formEditPass.confirm_new_password
+    ) {
+      toast.error("لطفاً تمامی فیلدها را پر کنید.", {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 5000,
+      });
+      return;
+    }
+
+    if (
       formEditPass.old_password &&
       formEditPass.new_password &&
       formEditPass.confirm_new_password

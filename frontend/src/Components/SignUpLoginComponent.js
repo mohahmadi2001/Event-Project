@@ -87,7 +87,7 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
 
   const urlRegister = "http://localhost:8000/auth/user/register/";
   function handleRegister() {
-    console.log("Data to be send:", formDataRegister);
+    // console.log("Data to be send:", formDataRegister);
     fetch(urlRegister, {
       method: "POST",
       headers: {
@@ -101,7 +101,7 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
         if (data.message) {
           toast.success("ثبت‌نام با موفقیت انجام شد", {
             position: toast.POSITION.TOP_RIGHT,
-            autoClose: 2000, // Auto close after 2 seconds
+            autoClose: 5000, // Auto close after 2 seconds
           });
         } else {
           if (data.email) {
@@ -173,7 +173,7 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
 
   const urlLogin = "http://localhost:8000/auth/token/login/";
   function handleLogin() {
-    console.log("Data to be send:", formDataLogin);
+    // console.log("Data to be send:", formDataLogin);
     const { email, password } = formDataLogin;
     const base64Credentials = generateBase64Credentials(email, password);
     fetch(urlLogin, {

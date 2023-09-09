@@ -97,15 +97,11 @@ export default function CurrentMembers() {
   if (now > electionStartedAt && now < electionEndedAt) {
     return (
       <div className="election-container">
-        <h5 className="not-election-time-title">
+        <h5 style={{ color: "red", textAlign: "center" }}>
           انتخابات هنوز به پایان نرسیده است!
         </h5>
-        <div className="time-expire-wrapper">
-          <img
-            src="/4867780_prev_ui.png"
-            alt="time-expire"
-            className="time-expire"
-          />
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <img src="/4867780_prev_ui.png" alt="time-expire" />
         </div>
       </div>
     );
