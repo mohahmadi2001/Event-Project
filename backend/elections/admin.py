@@ -24,7 +24,7 @@ class ElectionAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('title', 'slug', 'description', 'capacity')}),
         ('Election Dates', {'fields': ('election_started_at', 'election_ended_at', 'candidate_registration_start', 'candidate_registration_end')}),
-        # ('Candidates', {'fields': ('candidates',)}),
+        ('Candidates', {'fields': ('candidates',)}),
         ('Voting', {'fields': ('max_votes_per_user',)}),
     )
 
