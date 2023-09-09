@@ -49,12 +49,7 @@ class User(AbstractBaseUser,PermissionsMixin):
         _("staff status"),
         default=False,
     )
-    events = models.ManyToManyField(
-        "workshops.Event",
-        verbose_name=_("Events"),
-        blank=True,
-        related_name="participants",
-    )
+    
     
     objects = UserManager()
 

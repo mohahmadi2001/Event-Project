@@ -18,10 +18,7 @@ class Event(SoftDeleteModel):
                                     )
     start_event_at = models.DateTimeField(_("Start Event At"))
     end_event_at = models.DateTimeField(_("End Event At"))
-    user = models.ManyToManyField(
-                                "accounts.User",
-                                verbose_name=_("user")
-                            )
+    
 
     def __str__(self):
         return self.title
