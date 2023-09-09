@@ -1,5 +1,5 @@
 import "./Election.css";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 export default function ParticipateElection() {
   const [appCandidates, setAppCandidates] = useState([]);
@@ -117,8 +117,8 @@ export default function ParticipateElection() {
               marginBottom: "40px",
             }}
           >
-            {appCandidates.map((element) => (
-              <>
+            {appCandidates.map((element, i) => (
+              <React.Fragment key={i}>
                 <label
                   style={{
                     fontSize: "18px",
@@ -137,7 +137,7 @@ export default function ParticipateElection() {
                   checked={selectedCandidates.includes(element.id)}
                   disabled={isError}
                 />
-              </>
+              </React.Fragment>
             ))}
           </div>
         </div>

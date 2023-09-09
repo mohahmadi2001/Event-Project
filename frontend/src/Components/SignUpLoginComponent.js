@@ -97,7 +97,7 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("Server response:", data);
+        // console.log("Server response:", data);
         if (data.message) {
           toast.success("ثبت‌نام با موفقیت انجام شد", {
             position: toast.POSITION.TOP_RIGHT,
@@ -185,7 +185,7 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("Server response:", data);
+        // console.log("Server response:", data);
         if (data.auth_token) {
           toast.success("ورود با موفقیت انجام شد", {
             position: toast.POSITION.TOP_RIGHT,

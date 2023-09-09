@@ -102,7 +102,6 @@ export default function Profile() {
           position: toast.POSITION.TOP_RIGHT,
           autoClose: 5000, // Auto close after 5 seconds
         });
-        console.log(data);
       })
       .catch((error) => console.error("Error:", error));
     setFormEditData({
@@ -158,7 +157,6 @@ export default function Profile() {
           position: toast.POSITION.TOP_RIGHT,
           autoClose: 5000, // Auto close after 5 seconds
         });
-        console.log(data);
       })
       .catch((error) => console.error("Error:", error));
     setFormEditData({
@@ -171,9 +169,9 @@ export default function Profile() {
 
   //User edit password
   const [formEditPass, setFormEditPass] = useState({
-    current_password: "",
+    old_password: "",
     new_password: "",
-    re_new_password: "",
+    confirm_new_password: "",
   });
 
   function handleChangePass(e) {
@@ -184,11 +182,11 @@ export default function Profile() {
 
   function handleEditPass() {
     if (
-      formEditPass.current_password &&
+      formEditPass.old_password &&
       formEditPass.new_password &&
-      formEditPass.re_new_password
+      formEditPass.confirm_new_password
     ) {
-      const urlChangePass = "http://localhost:8000/auth/user/password_change/";
+      const urlChangePass = "http://localhost:8000/auth/user/change-password/";
 
       const base64Credentials = localStorage.getItem("credentials");
       const headers = {
@@ -208,22 +206,35 @@ export default function Profile() {
           return response.json();
         })
         .then((data) => {
-          toast.success("اطلاعات با موفقیت ویرایش شد", {
-            position: toast.POSITION.TOP_RIGHT,
-            autoClose: 5000, // Auto close after 5 seconds
-          });
-          console.log(data);
+          if (data.message) {
+            toast.success("اطلاعات با موفقیت ویرایش شد", {
+              position: toast.POSITION.TOP_RIGHT,
+              autoClose: 5000, // Auto close after 5 seconds
+            });
+          }
+          if (data.incorrecterror) {
+            toast.error("رمز عبور فعلی نادرست است.", {
+              position: toast.POSITION.TOP_RIGHT,
+              autoClose: 5000, // Auto close after 5 seconds
+            });
+          }
+          if (data.matcherror) {
+            toast.error("رمز عبور جدید و تکرار آن مطابقت ندارند.", {
+              position: toast.POSITION.TOP_RIGHT,
+              autoClose: 5000, // Auto close after 5 seconds
+            });
+          }
         })
         .catch((error) => console.error("Error:", error));
       setFormEditPass({
-        current_password: "",
+        old_password: "",
         new_password: "",
-        re_new_password: "",
+        confirm_new_password: "",
       });
     } else if (
-      formEditPass.current_password === "" &&
+      formEditPass.old_password === "" &&
       formEditPass.new_password === "" &&
-      formEditPass.re_new_password === ""
+      formEditPass.confirm_new_password === ""
     ) {
       alert("چیزی برای ویرایش وجود ندارد!");
     }
@@ -235,7 +246,14 @@ export default function Profile() {
 
   return (
     <div className="homepage-container">
-      <p style={{ direction: "rtl", marginRight: "60px", color: "green" }}>
+      <p
+        style={{
+          direction: "rtl",
+          marginRight: "60px",
+          color: "#5bb450",
+          fontWeight: "bold",
+        }}
+      >
         خوش اومدی! {email}
       </p>
       <h2 className="profile-title" style={{ marginBottom: "2.5rem" }}>
@@ -298,8 +316,8 @@ export default function Profile() {
           <input
             type="password"
             className="password-input"
-            name="current_password"
-            value={formEditPass.current_password}
+            name="old_password"
+            value={formEditPass.old_password}
             onChange={handleChangePass}
           />
           <label className="label">رمز عبور فعلی</label>
@@ -316,8 +334,8 @@ export default function Profile() {
           <input
             type="password"
             className="password-input password-repeat"
-            name="re_new_password"
-            value={formEditPass.re_new_password}
+            name="confirm_new_password"
+            value={formEditPass.confirm_new_password}
             onChange={handleChangePass}
           />
           <label className="label">تکرار رمز عبور</label>
@@ -340,10 +358,10 @@ export default function Profile() {
           <li key={i} style={{ marginBottom: "10px" }}>
             <h6>{element.title}</h6>
             <p style={{ color: "green", fontSize: "14px" }}>
-              تاریخ شروع: {formatToPersianDate(element.start_event_at)}
+              تاریخ شروع: {formatToPersianDate(element.event_start_time)}
             </p>
             <img
-              src={`/${element.slug}.jpg`}
+              src={`/${element.event_slug}.jpg`}
               alt="event-img"
               style={{ width: "70px", height: "70px" }}
             />
