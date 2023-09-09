@@ -53,13 +53,17 @@ export default function EventsContainer() {
     // const authToken = localStorage.getItem("authToken");
     const base64Credentials = localStorage.getItem("credentials");
     if (base64Credentials === null) {
-      alert("ابتدا وارد سایت شوید");
+      alert("ابتدا وارد سایت شوید.");
       return;
     }
 
-    if (registeredEvents.some((event) => event.slug === selected?.slug)) {
+    if (
+      registeredEvents.some(
+        (event) => event.event_slug === selected?.event_slug
+      )
+    ) {
       // Check if the event is already registered
-      toast.error("شما قبلا در این رویداد ثبت‌نام کرده‌اید", {
+      toast.error("شما قبلا در این رویداد ثبت‌نام کرده‌اید.", {
         position: toast.POSITION.TOP_RIGHT,
         autoClose: 5000, // Auto close after 5 seconds
       });
@@ -80,7 +84,7 @@ export default function EventsContainer() {
       method: "POST",
       headers: headers,
       body: JSON.stringify({
-        id: selected?.id,
+        event_id: selected?.id,
       }),
     })
       .then((response) => {
@@ -89,12 +93,17 @@ export default function EventsContainer() {
       .then((data) => {
         console.log("Server response:", data);
         if (data.message) {
-          toast.success("ثبت‌نام با موفقیت انجام شد", {
+          toast.success("ثبت‌نام با موفقیت انجام شد.", {
             position: toast.POSITION.TOP_RIGHT,
             autoClose: 5000, // Auto close after 5 seconds
           });
         } else if (data.capacityerror) {
-          toast.error("ظرفیت رویداد تکمیل است", {
+          toast.error("ظرفیت رویداد تکمیل است.", {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 5000, // Auto close after 5 seconds
+          });
+        } else if (data.error) {
+          toast.error("شما قبلا در این رویداد ثبت‌نام کرده‌اید.", {
             position: toast.POSITION.TOP_RIGHT,
             autoClose: 5000, // Auto close after 5 seconds
           });

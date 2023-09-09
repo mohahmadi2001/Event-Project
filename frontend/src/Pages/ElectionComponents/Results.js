@@ -6,6 +6,7 @@ import HighchartsReact from "highcharts-react-official";
 export default function Results() {
   const [electionInfo, setElectionInfo] = useState([]);
   const [loading, setLoading] = useState(true);
+
   //Fetch election data
   useEffect(() => {
     const base64Credentials = localStorage.getItem("credentials");
@@ -178,6 +179,9 @@ export default function Results() {
     );
   }
 
+  const sortedResults = [...results];
+  sortedResults.sort((a, b) => b.votes_count - a.votes_count);
+
   // Check if the current time is before or after the election
   const now = new Date();
   const electionStartedAt = new Date(electionInfo[0]?.election_started_at);
@@ -213,7 +217,7 @@ export default function Results() {
           marginLeft: "55rem",
         }}
       >
-        {results.map((element, i) => (
+        {sortedResults.map((element, i) => (
           <React.Fragment key={i}>
             <p>
               {`${element.first_name} `}

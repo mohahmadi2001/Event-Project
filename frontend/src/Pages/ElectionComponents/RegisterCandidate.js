@@ -1,10 +1,58 @@
 import { useState, useEffect } from "react";
 import "./Election.css";
 import { toast } from "react-toastify";
+import moment from "jalali-moment";
 
 export default function RegisterCandidate() {
   const [electionInfo, setElectionInfo] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [remainingTime, setRemainingTime] = useState("");
+
+  //Countdown
+  const registerEndedAt = new Date(electionInfo[0]?.candidate_registration_end);
+  const calculateRemainingTime = () => {
+    const now = moment();
+    const endDate = moment(registerEndedAt, "YYYY-MM-DDTHH:mm:ssZ");
+    const timeRemaining = endDate.diff(now);
+
+    if (timeRemaining <= 0) {
+      // Election has ended
+      setRemainingTime("انتخابات به پایان رسید.");
+    } else {
+      const duration = moment.duration(timeRemaining);
+      const days = duration.days();
+      const hours = duration.hours();
+      const minutes = duration.minutes();
+      const seconds = duration.seconds();
+
+      let formattedTime = "";
+
+      if (days > 0) {
+        formattedTime += `${days} روز `;
+      }
+
+      if (hours > 0) {
+        formattedTime += `${hours} ساعت `;
+      }
+
+      formattedTime += `${minutes} دقیقه ${seconds} ثانیه`;
+
+      setRemainingTime(formattedTime);
+    }
+  };
+
+  useEffect(() => {
+    calculateRemainingTime(); // Calculate initial remaining time
+
+    const intervalId = setInterval(() => {
+      calculateRemainingTime();
+    }, 1000);
+
+    return () => {
+      clearInterval(intervalId); // Clean up the interval on component unmount
+    };
+  }, [registerEndedAt]);
+
   //Fetch election data
   useEffect(() => {
     const base64Credentials = localStorage.getItem("credentials");
@@ -169,6 +217,9 @@ export default function RegisterCandidate() {
 
   return (
     <div className="election-container">
+      <p style={{ direction: "rtl", textAlign: "center", color: "red" }}>
+        زمان باقی مانده تا پایان ثبت‌نام کاندیدا: {remainingTime}
+      </p>
       <h2 className="register-can-title">ثبت‌نام کاندیدا</h2>
       <div className="registration-form">
         <label className="label-reg">نام</label>

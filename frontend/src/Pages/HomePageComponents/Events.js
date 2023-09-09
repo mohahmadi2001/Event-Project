@@ -3,11 +3,106 @@ import { Link } from "react-router-dom";
 import { ModalAntd } from "../../Components/ModalAntd";
 import jalaliMoment from "jalali-moment";
 import { Modal, Button } from "antd";
+import { toast } from "react-toastify";
 
 export default function Events() {
   const scrollToTop = () => {
     window.scrollTo(0, 0); // Scroll to the top of the page
   };
+
+  //Get user's registered events
+  const [registeredEvents, setRegisteredEvents] = useState([]);
+  const urlRegisteredEvents =
+    "http://localhost:8000/auth/user/registered-events/";
+  useEffect(() => {
+    const base64Credentials = localStorage.getItem("credentials");
+    const headers = {
+      "Content-Type": "application/json",
+    };
+
+    if (base64Credentials) {
+      // headers.Authorization = `Token ${authToken}`;
+      headers.Authorization = `Basic ${base64Credentials}`;
+    }
+
+    fetch(urlRegisteredEvents, {
+      method: "GET",
+      headers: headers,
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error("Network response was not ok");
+        return response.json();
+      })
+      .then((data) => {
+        setRegisteredEvents(data);
+      })
+      .catch((error) => console.error("Error:", error));
+  }, []);
+
+  //Sending request to backend server for users to register events
+  const urlEventRegister = "http://localhost:8000/events/register-event/";
+  function handleRegisterEvent() {
+    // const authToken = localStorage.getItem("authToken");
+    const base64Credentials = localStorage.getItem("credentials");
+    if (base64Credentials === null) {
+      alert("ابتدا وارد سایت شوید.");
+      return;
+    }
+
+    if (
+      registeredEvents.some(
+        (event) => event.event_slug === selected?.event_slug
+      )
+    ) {
+      // Check if the event is already registered
+      toast.error("شما قبلا در این رویداد ثبت‌نام کرده‌اید.", {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 5000, // Auto close after 5 seconds
+      });
+      return;
+    }
+
+    // console.log("auth", authToken);
+    const headers = {
+      "Content-Type": "application/json",
+    };
+
+    if (base64Credentials) {
+      // headers.Authorization = `Token ${authToken}`;
+      headers.Authorization = `Basic ${base64Credentials}`;
+    }
+
+    fetch(urlEventRegister, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        event_id: selected?.id,
+      }),
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Server response:", data);
+        if (data.message) {
+          toast.success("ثبت‌نام با موفقیت انجام شد.", {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 5000, // Auto close after 5 seconds
+          });
+        } else if (data.capacityerror) {
+          toast.error("ظرفیت رویداد تکمیل است.", {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 5000, // Auto close after 5 seconds
+          });
+        } else if (data.error) {
+          toast.error("شما قبلا در این رویداد ثبت‌نام کرده‌اید.", {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 5000, // Auto close after 5 seconds
+          });
+        }
+      })
+      .catch((error) => console.log("Fetch error:", error));
+  }
 
   //Implementing antd modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,6 +115,7 @@ export default function Events() {
 
   const handleOk = () => {
     setIsModalOpen(false);
+    handleRegisterEvent();
   };
 
   const handleCancel = () => {

@@ -10,6 +10,7 @@ import ParticipateElection from "./Pages/ElectionComponents/ParticipateElection"
 import RegisterCandidate from "./Pages/ElectionComponents/RegisterCandidate";
 import Results from "./Pages/ElectionComponents/Results";
 import Profile from "./Pages/ProfileComponents/Profile";
+import CurrentMembers from "./Pages/CurrentMembersComponent/CurrentMembers";
 import "./index.css";
 
 export default function App() {
@@ -26,6 +27,7 @@ export default function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/events" element={<EventsContainer />} />
         <Route path="/election" element={<ElectionContainer />} />
+        <Route path="/current-members" element={<CurrentMembers />} />
         <Route
           path="/election/participate-election"
           element={<ParticipateElection />}

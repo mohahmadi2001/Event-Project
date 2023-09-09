@@ -259,6 +259,18 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
     }
   }
 
+  // Check if the keyboard layout is English
+  function checkKeyboardLayout(e) {
+    const keyboardLayout = e.key.charCodeAt(0) < 128 ? "en" : "non-en";
+    if (keyboardLayout === "non-en") {
+      e.preventDefault();
+      toast.error("کیبورد خود را به انگلیسی تغییر دهید.", {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 5000, // Auto close after 5 seconds
+      });
+    }
+  }
+
   return (
     <>
       <ModalAntd>
@@ -323,6 +335,7 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
                       value={formDataRegister.email}
                       name="email"
                       onChange={handleChangeRegister}
+                      onKeyDown={checkKeyboardLayout}
                       required
                     />
                     <label className="label">ایمیل</label>
@@ -342,6 +355,7 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
                       value={formDataRegister.password}
                       name="password"
                       onChange={handleChangeRegister}
+                      onKeyDown={checkKeyboardLayout}
                       required
                     />
                     <label className="label">رمز عبور</label>
@@ -352,6 +366,7 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
                       value={formDataRegister.confirm_password}
                       name="confirm_password"
                       onChange={handleChangeRegister}
+                      onKeyDown={checkKeyboardLayout}
                       required
                     />
                     <label className="label">تکرار رمز عبور</label>
@@ -362,6 +377,7 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
                       value={formDataRegister.is_student}
                       name="is_student"
                       onChange={handleChangeRegister}
+                      style={{ accentColor: "var(--main-orange)" }}
                     />
                     <label className="label">:دانشجو هستم</label>
 
@@ -388,6 +404,8 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
                       value={formDataLogin.email}
                       name="email"
                       onChange={handleChangeLogin}
+                      placeholder="ایمیل"
+                      onKeyDown={checkKeyboardLayout}
                       required
                     />
                     <label className="label">نام کاربری</label>
@@ -398,6 +416,7 @@ function SignUpLoginForms({ isOpen, onCancel, setIsModalOpen }) {
                       value={formDataLogin.password}
                       name="password"
                       onChange={handleChangeLogin}
+                      onKeyDown={checkKeyboardLayout}
                       required
                     />
                     <label className="label">رمز عبور</label>

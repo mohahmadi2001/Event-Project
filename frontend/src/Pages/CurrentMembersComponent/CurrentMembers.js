@@ -123,14 +123,14 @@ export default function CurrentMembers() {
         />
       </div>
       <div className="current-members-container">
-        <h2 className="current-members-title">اعضای فعلی انجمن علمی</h2>
+        <h2 className="current-members-title">اعضای انجمن علمی</h2>
         <div className="content-container">
           <div className="current-members">
             {currentMembers.map((element, i) => (
               <React.Fragment key={i}>
                 <p>{element.entry_year}</p>
                 <p>
-                  {element.first_name}
+                  {`${element.first_name} `}
                   {element.last_name}
                 </p>
               </React.Fragment>

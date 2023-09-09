@@ -380,7 +380,7 @@ export default function Profile() {
           </li>
         ))}
       </ul>
-      <h5 className="profile-title">وضعیت شرکت در انتخابات</h5>
+      {/* <h5 className="profile-title">وضعیت شرکت در انتخابات</h5> */}
     </div>
   );
 }

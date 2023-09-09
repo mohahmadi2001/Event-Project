@@ -60,6 +60,15 @@ export default function NavigationBar() {
 
           <Nav.Link
             as={Link}
+            to="/current-members"
+            className="navLink"
+            onClick={scrollToTop}
+          >
+            اعضای انجمن
+          </Nav.Link>
+
+          <Nav.Link
+            as={Link}
             to="/election"
             className="navLink"
             onClick={scrollToTop}
