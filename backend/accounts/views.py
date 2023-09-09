@@ -102,10 +102,8 @@ class StudentInfoAPIView(generics.ListAPIView):
 class StaffUserListView(APIView):
     permission_classes = [AllowAny] 
     def get(self, request):
-        # استفاده از مدل `User` برای بازیابی کاربرانی که `is_staff=True` دارند
         staff_users = User.objects.filter(is_staff=True)
         
-        # استفاده از serializer برای تبدیل اطلاعات به فرمت JSON
         serializer = UserSerializer(staff_users, many=True)
         
         return Response(serializer.data, status=status.HTTP_200_OK)
